@@ -1,0 +1,13 @@
+{
+  "name": "apex-horizon-capital",
+  "version": "1.0.0",
+  "description": "Institutional wealth management dummy portal simulation",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx browser-sync start --server --port 8080 --files \"*.*\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "^3.0.2"
+  }
+}

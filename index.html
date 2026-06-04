@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Horizon Capital | Institutional Wealth Management</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Access premier institutional wealth management, algorithmic hedge portfolios, clean energy infrastructure trusts, and digital assets simulation interfaces at Apex Horizon Capital.">
+  <meta name="keywords" content="investment, hedge fund, portfolio, cryptocurrency, real estate trust, algorithmic trading">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ================= SCROLL PROGRESS BAR ================= -->
+  <div id="scroll-progress-bar"></div>
+
+  <!-- ================= HEADER NAVIGATION ================= -->
+  <header class="main-header" id="landing-header">
+    <div class="container flex justify-between items-center">
+      <div class="logo">
+        <div class="logo-icon">
+          <i data-lucide="compass" class="logo-icon-svg"></i>
+        </div>
+        <div class="logo-text">Apex Horizon <span>Capital</span></div>
+      </div>
+      <button class="menu-toggle-btn" id="landing-mobile-toggle">
+        <i data-lucide="menu" style="width: 24px; height: 24px;"></i>
+      </button>
+      <nav class="nav-container" id="landing-nav-container">
+        <ul class="nav-menu">
+          <li><span class="nav-link" onclick="scrollToElement('features')">Strategies</span></li>
+          <li><span class="nav-link" onclick="scrollToElement('calculator')">Calculator</span></li>
+          <li><span class="nav-link" id="nav-login-btn">Client Login</span></li>
+          <li><button class="btn btn-primary" id="nav-signup-btn">Get Started</button></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= TICKER BANNER RIBBON ================= -->
+  <div class="ticker-wrap" id="landing-ticker">
+    <div class="ticker" id="live-ticker-ribbon">
+      <!-- Items dynamically populated by JS -->
+    </div>
+  </div>
+
+  <!-- ================= LANDING PAGE VIEW ================= -->
+  <main id="landing-view">
+    <section class="hero container">
+      <div class="hero-tag">
+        <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i>
+        SEC Regulated Institutional Asset Management
+      </div>
+      <h1 class="hero-title">High-Yield Wealth Strategies for the Modern Investor</h1>
+      <p class="hero-subtitle">
+        Deploy sophisticated hedge fund algorithms, direct venture assets, and global sustainable trusts with an intuitive institutional dashboard.
+      </p>
+      <div class="flex items-center justify-center gap-4" style="margin-bottom: 60px;">
+        <button class="btn btn-primary btn-lg" onclick="openModal('signup-modal')">Open Account</button>
+        <button class="btn btn-secondary btn-lg" onclick="scrollToElement('calculator')">Project Returns</button>
+      </div>
+
+      <!-- ================= LIVE ACTIVITY STRIP ================= -->
+    <div class="live-activity-strip" id="landing-live-strip">
+      <div class="las-pulse"></div>
+      <span class="las-label">Live Activity:</span>
+      <span id="landing-activity-msg" class="las-msg">Michael R. from New York just allocated $25,000 into Quantum Growth VC Fund...</span>
+    </div>
+
+    <!-- ================= PORTFOLIO ESTIMATOR CALCULATOR ================= -->
+      <div class="calculator-card glass-panel glow-hover" id="calculator">
+        <div style="margin-bottom: 24px; text-align: left;">
+          <h2 style="font-size: 1.6rem; margin-bottom: 8px;">Compound Growth Projector</h2>
+          <p class="text-muted" style="font-size: 0.9rem;">Estimate future portfolio valuations based on your initial deposit and active allocations.</p>
+        </div>
+        <div class="calc-grid">
+          <div style="text-align: left;">
+            <div class="calc-range-wrapper">
+              <div class="range-header">
+                <span class="form-label">Initial Investment</span>
+                <span class="range-val" id="calc-initial-lbl">$10,000</span>
+              </div>
+              <input type="range" min="1000" max="250000" step="1000" value="10000" class="custom-range" id="calc-initial">
+            </div>
+
+            <div class="calc-range-wrapper">
+              <div class="range-header">
+                <span class="form-label">Monthly Deposit</span>
+                <span class="range-val" id="calc-monthly-lbl">$500</span>
+              </div>
+              <input type="range" min="0" max="10000" step="50" value="500" class="custom-range" id="calc-monthly">
+            </div>
+
+            <div class="calc-range-wrapper">
+              <div class="range-header">
+                <span class="form-label">Growth Duration (Years)</span>
+                <span class="range-val" id="calc-years-lbl">5 Years</span>
+              </div>
+              <input type="range" min="1" max="30" step="1" value="5" class="custom-range" id="calc-years">
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Portfolio Allocation Strategy</span>
+              <div class="risk-selector">
+                <button class="risk-btn active" data-yield="0.075">Balanced (7.5%)</button>
+                <button class="risk-btn" data-yield="0.145">Growth (14.5%)</button>
+                <button class="risk-btn" data-yield="0.228">Aggressive VC (22.8%)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-results">
+            <div class="result-group">
+              <div class="result-label">Total Amount Invested</div>
+              <div class="result-val" style="color: var(--text-primary);" id="calc-total-invested">$40,000</div>
+            </div>
+            <div class="result-group">
+              <div class="result-label">Projected Portfolio Value</div>
+              <div class="result-val text-success" id="calc-projected-value">$52,431</div>
+            </div>
+            <div class="result-group" style="margin-bottom: 0;">
+              <div class="result-label">Simulated Wealth Accrual</div>
+              <div class="result-val text-info" id="calc-wealth-earned">+$12,431</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PLATFORM STATS COUNTERS ================= -->
+    <section class="stats-section container reveal-section" id="platform-stats">
+      <div class="stats-grid">
+        <div class="stat-counter-card glass-panel">
+          <div class="stat-counter-icon"><i data-lucide="users" style="width:28px;height:28px;"></i></div>
+          <div class="stat-counter-value" data-target="14800" data-prefix="" data-suffix="+">0</div>
+          <div class="stat-counter-label">Verified Investors</div>
+        </div>
+        <div class="stat-counter-card glass-panel">
+          <div class="stat-counter-icon" style="color:var(--color-success);"><i data-lucide="trending-up" style="width:28px;height:28px;"></i></div>
+          <div class="stat-counter-value" data-target="2.4" data-prefix="$" data-suffix="B+" data-decimal="1">$0</div>
+          <div class="stat-counter-label">Assets Under Management</div>
+        </div>
+        <div class="stat-counter-card glass-panel">
+          <div class="stat-counter-icon" style="color:var(--color-warning);"><i data-lucide="percent" style="width:28px;height:28px;"></i></div>
+          <div class="stat-counter-value" data-target="17.3" data-prefix="" data-suffix="%" data-decimal="1">0</div>
+          <div class="stat-counter-label">Avg. Annual Portfolio Return</div>
+        </div>
+        <div class="stat-counter-card glass-panel">
+          <div class="stat-counter-icon" style="color:var(--color-info);"><i data-lucide="shield-check" style="width:28px;height:28px;"></i></div>
+          <div class="stat-counter-value" data-target="99.8" data-prefix="" data-suffix="%" data-decimal="1">0</div>
+          <div class="stat-counter-label">Platform Uptime SLA</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PREMIUM CORE STRATEGIES ================= -->
+    <section class="features-section container" id="features">
+      <div class="section-header">
+        <h2 class="section-title">Institutional Investing Infrastructure</h2>
+        <p class="section-subtitle">Diverse global portfolios built on systematic market optimization and deep value discovery.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card glass-panel glow-hover">
+          <div class="feature-icon-box">
+            <i data-lucide="cpu"></i>
+          </div>
+          <h3>Systematic Alpha Portfolios</h3>
+          <p>Quant-driven algorithmic models adjusting asset weightings instantly dynamically. Mitigate risk via arbitrage and volatile hedged positions.</p>
+        </div>
+
+        <div class="feature-card glass-panel glow-hover">
+          <div class="feature-icon-box">
+            <i data-lucide="leaf"></i>
+          </div>
+          <h3>Green Energy Infrastructure</h3>
+          <p>Direct exposure in solar farms, wind-generation utilities, and next-generation storage complexes. Consistent inflation-proof compound dividends.</p>
+        </div>
+
+        <div class="feature-card glass-panel glow-hover">
+          <div class="feature-icon-box">
+            <i data-lucide="coins"></i>
+          </div>
+          <h3>Digital Asset Indexes</h3>
+          <p>Direct institutional indexes backing principal tokens (BTC, ETH, SOL) combined with high-yield delta-neutral liquidity allocation models.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section class="how-it-works container reveal-section" id="how-it-works">
+      <div class="section-header">
+        <h2 class="section-title">Start Investing in 3 Simple Steps</h2>
+        <p class="section-subtitle">Institutional-grade access simplified for every tier of investor.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card glass-panel glow-hover">
+          <div class="step-number">01</div>
+          <div class="step-icon"><i data-lucide="user-check" style="width:32px;height:32px;"></i></div>
+          <h3>Create & Verify</h3>
+          <p>Register your accredited investor profile. Complete KYC identity verification in under 2 minutes using our secure biometric pipeline.</p>
+          <div class="step-arrow"><i data-lucide="arrow-right" style="width:20px;height:20px;"></i></div>
+        </div>
+        <div class="step-card glass-panel glow-hover">
+          <div class="step-number">02</div>
+          <div class="step-icon" style="color:var(--color-success);"><i data-lucide="wallet" style="width:32px;height:32px;"></i></div>
+          <h3>Fund Your Account</h3>
+          <p>Deposit capital via ACH wire, card, or crypto (USDC/USDT). Funds are cleared in the Apex USD Custody Vault instantly.</p>
+          <div class="step-arrow"><i data-lucide="arrow-right" style="width:20px;height:20px;"></i></div>
+        </div>
+        <div class="step-card glass-panel glow-hover">
+          <div class="step-number">03</div>
+          <div class="step-icon" style="color:var(--color-warning);"><i data-lucide="bar-chart-3" style="width:32px;height:32px;"></i></div>
+          <h3>Allocate & Earn</h3>
+          <p>Choose from curated hedge funds, VC portfolios, and digital asset indexes. Watch your wealth compound in real-time dashboards.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= BLURRED PORTFOLIO TEASER ================= -->
+    <section class="teaser-section container reveal-section">
+      <div class="teaser-card glass-panel">
+        <div class="teaser-content">
+          <div>
+            <div class="hero-tag" style="margin-bottom:16px;">
+              <i data-lucide="lock" style="width:14px;height:14px;"></i>
+              Exclusive Member Dashboard
+            </div>
+            <h2 style="font-size:2rem;margin-bottom:12px;">Your Personalized Growth Curve Awaits</h2>
+            <p style="color:var(--text-secondary);max-width:480px;line-height:1.7;margin-bottom:28px;">
+              After sign-up, your portfolio valuation chart updates in real-time — showing exact growth trajectories across all your allocations.
+            </p>
+            <button class="btn btn-primary btn-lg" onclick="openModal('signup-modal')">
+              <i data-lucide="trending-up" style="width:18px;height:18px;"></i>
+              Unlock Your Dashboard
+            </button>
+          </div>
+          <div class="teaser-chart-box">
+            <canvas id="teaserChart" height="200"></canvas>
+            <div class="teaser-blur-overlay">
+              <i data-lucide="eye-off" style="width:32px;height:32px;opacity:0.5;"></i>
+              <span>Sign up to unlock</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TESTIMONIALS ================= -->
+    <section class="testimonials-section container reveal-section" id="testimonials">
+      <div class="section-header">
+        <h2 class="section-title">Trusted by Investors Worldwide</h2>
+        <p class="section-subtitle">What our accredited investor community is saying.</p>
+      </div>
+      <div class="testimonials-track" id="testimonials-track">
+        <div class="testimonial-card glass-panel">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"The Quantum Growth VC Fund has returned 18% in just 8 months. The dashboard clarity and real-time analytics are unmatched in institutional investing."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">JR</div>
+            <div>
+              <div class="testimonial-name">James R.</div>
+              <div class="testimonial-role">Series B Founder, San Francisco</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card glass-panel">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"I moved $200K from a traditional brokerage to Apex Horizon. The green infrastructure dividends have been incredibly consistent. Best decision of 2025."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #10b981, #0ea5e9);">SM</div>
+            <div>
+              <div class="testimonial-name">Sarah M.</div>
+              <div class="testimonial-role">CFO, Chicago</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card glass-panel">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"The Digital Asset Frontier Fund exposure with institutional-grade custody is exactly what I needed. Transparent, live, and profitable."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">AR</div>
+            <div>
+              <div class="testimonial-name">Alex R.</div>
+              <div class="testimonial-role">Angel Investor, Austin</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card glass-panel">
+          <div class="testimonial-stars">★★★★☆</div>
+          <p class="testimonial-quote">"Apex Horizon's referral engine alone paid my first month's subscription costs. The FOMO is real — but so are the returns from the Alpha Fund."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #0ea5e9, #6366f1);">MK</div>
+            <div>
+              <div class="testimonial-name">Maya K.</div>
+              <div class="testimonial-role">Portfolio Manager, New York</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonials-controls">
+        <button class="testi-btn" id="testi-prev" onclick="scrollTestimonials(-1)">
+          <i data-lucide="chevron-left" style="width:20px;height:20px;"></i>
+        </button>
+        <div class="testi-dots" id="testi-dots"></div>
+        <button class="testi-btn" id="testi-next" onclick="scrollTestimonials(1)">
+          <i data-lucide="chevron-right" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= TRUST LOGOS / PARTNER STRIP ================= -->
+    <section class="trust-logos-section container reveal-section">
+      <p class="trust-label">Regulated, Insured & Reported By</p>
+      <div class="trust-logos-grid">
+        <div class="trust-logo-item"><i data-lucide="landmark" style="width:22px;height:22px;"></i><span>SEC Regulated</span></div>
+        <div class="trust-logo-item"><i data-lucide="shield" style="width:22px;height:22px;"></i><span>SIPC Insured</span></div>
+        <div class="trust-logo-item"><i data-lucide="bar-chart-2" style="width:22px;height:22px;"></i><span>Bloomberg Indexed</span></div>
+        <div class="trust-logo-item"><i data-lucide="globe" style="width:22px;height:22px;"></i><span>Reuters Verified</span></div>
+        <div class="trust-logo-item"><i data-lucide="lock" style="width:22px;height:22px;"></i><span>SOC 2 Certified</span></div>
+        <div class="trust-logo-item"><i data-lucide="cpu" style="width:22px;height:22px;"></i><span>ISO 27001</span></div>
+      </div>
+    </section>
+
+    <!-- ================= FAQ ACCORDION ================= -->
+    <section class="faq-section container reveal-section" id="faq">
+      <div class="section-header">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Everything you need to know before allocating capital.</p>
+      </div>
+      <div class="faq-list" id="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            <span>Is my capital insured and protected?</span>
+            <i data-lucide="chevron-down" class="faq-chevron" style="width:20px;height:20px;"></i>
+          </div>
+          <div class="faq-answer">Yes. All USD balances are held in SIPC-insured custodian accounts up to regulatory limits. Digital asset holdings are stored in cold-storage multi-sig hardware vaults with AES-256 encryption. Your capital security is our first priority.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            <span>How are returns generated across the funds?</span>
+            <i data-lucide="chevron-down" class="faq-chevron" style="width:20px;height:20px;"></i>
+          </div>
+          <div class="faq-answer">Each Horizon Fund uses a distinct systematic strategy. The Alpha Fund runs quant-driven equity arbitrage. The Quantum Growth VC Fund holds direct equity stakes in late-stage private companies. Green Infrastructure pays quarterly dividends from renewable utility contracts. Digital Frontier earns through delta-neutral DeFi liquidity mining.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            <span>Can I withdraw my funds at any time?</span>
+            <i data-lucide="chevron-down" class="faq-chevron" style="width:20px;height:20px;"></i>
+          </div>
+          <div class="faq-answer">Your Cash Liquidity balance is available for instant withdrawal at any time. Allocated fund positions may be liquidated with a standard T+2 settlement period for equity-based products, or within 24 hours for Digital Asset positions.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            <span>What is the minimum investment to get started?</span>
+            <i data-lucide="chevron-down" class="faq-chevron" style="width:20px;height:20px;"></i>
+          </div>
+          <div class="faq-answer">The minimum entry point is $1,000 for the Apex Horizon Alpha Fund and Digital Asset Frontier Fund. The Global Green Infrastructure Trust requires a $2,500 minimum, while the Quantum Growth VC Fund has a $5,000 minimum to access private equity allocations.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            <span>How does the referral program work?</span>
+            <i data-lucide="chevron-down" class="faq-chevron" style="width:20px;height:20px;"></i>
+          </div>
+          <div class="faq-answer">Every verified investor receives a unique referral node link. For each contact who registers and completes KYC verification, you receive a ₹500 referral reward transferred directly to your bank account. Referral earnings are unlimited.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= REGULATORY FOOTER ================= -->
+    <footer class="security-banner">
+      <div class="container">
+        <div class="security-content">
+          <div class="sec-item">
+            <i data-lucide="lock" class="sec-icon"></i>
+            <div class="sec-text">
+              <h4>Bank-Grade Encryption</h4>
+              <p>AES-256 secure network and multi-sig vault protocols.</p>
+            </div>
+          </div>
+          <div class="sec-item">
+            <i data-lucide="shield" class="sec-icon"></i>
+            <div class="sec-text">
+              <h4>SIPC Insurance Coverage</h4>
+              <p>Asset balances insured up to standard regulatory guidelines.</p>
+            </div>
+          </div>
+          <div class="sec-item">
+            <i data-lucide="globe" class="sec-icon"></i>
+            <div class="sec-text">
+              <h4>Institutional Security</h4>
+              <p>Licensed custodian backing with hardware terminal separation.</p>
+            </div>
+          </div>
+        </div>
+        <div class="footer-text">
+          <p>Apex Horizon Capital is a licensed investment adviser. All historical performances are dummy simulations. Returns are not guaranteed. System displays interactive dummy metrics for demonstration purposes.</p>
+          <p style="margin-top: 10px;">&copy; 2026 Apex Horizon Capital Group LLC. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ================= FLOATING STICKY CTA ================= -->
+  <div class="floating-cta" id="floating-cta">
+    <button class="btn btn-primary" onclick="openModal('signup-modal')" id="floating-cta-btn">
+      <i data-lucide="trending-up" style="width:16px;height:16px;"></i>
+      Start Investing
+    </button>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- ================= CLIENT PORTAL VIEW ================= -->
+  <!-- ======================================================= -->
+  <div id="portal-view" class="portal-layout hidden">
+    <!-- Portal Sidebar Navigation -->
+    <aside class="portal-sidebar">
+      <div class="logo portal-logo">
+        <div class="logo-icon">
+          <i data-lucide="compass" class="logo-icon-svg"></i>
+        </div>
+        <div class="logo-text" style="font-size: 1.25rem;">Apex Horizon</div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="sidebar-item active" id="menu-overview" onclick="switchPortalTab('overview')">
+          <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i>
+          Overview
+        </li>
+        <li class="sidebar-item" id="menu-investments" onclick="switchPortalTab('investments')">
+          <i data-lucide="trending-up" style="width: 18px; height: 18px;"></i>
+          Horizon Funds
+        </li>
+        <li class="sidebar-item" id="menu-mutualfunds" onclick="switchPortalTab('mutualfunds')">
+          <i data-lucide="pie-chart" style="width: 18px; height: 18px;"></i>
+          Mutual Funds
+        </li>
+        <li class="sidebar-item" id="menu-trading" onclick="switchPortalTab('trading')">
+          <i data-lucide="bar-chart-3" style="width: 18px; height: 18px;"></i>
+          Trading Terminal
+        </li>
+        <li class="sidebar-item" id="menu-affiliate" onclick="switchPortalTab('affiliate')">
+          <i data-lucide="gift" style="width: 18px; height: 18px;"></i>
+          Affiliate Hub
+        </li>
+        <li class="sidebar-item" id="menu-transactions" onclick="switchPortalTab('transactions')">
+          <i data-lucide="history" style="width: 18px; height: 18px;"></i>
+          Ledger Logs
+        </li>
+        <li class="sidebar-item" id="menu-settings" onclick="switchPortalTab('settings')">
+          <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
+          Security & API
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="avatar-circle">U</div>
+          <div class="user-info">
+            <span class="user-name" id="portal-username">Alpha User</span>
+            <span class="user-tier" id="portal-kyc-tier">KYC Level 2 Verified</span>
+          </div>
+          <button style="margin-left: auto; background: transparent; border: none; color: var(--text-secondary); cursor: pointer;" id="portal-logout-btn" title="Sign Out">
+            <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Portal Primary View Space -->
+    <main class="portal-content">
+      <header class="portal-topbar">
+        <button class="menu-toggle-btn" id="mobile-sidebar-toggle">
+          <i data-lucide="menu" style="width: 24px; height: 24px;"></i>
+        </button>
+        <div>
+          <h1 id="portal-tab-title" style="font-size: 1.8rem; font-family: var(--font-heading);">Investment Overview</h1>
+          <p class="text-muted" style="font-size: 0.85rem;" id="portal-tab-desc">Real-time status updates of active asset groups</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <button class="btn btn-secondary" onclick="openDepositModal()">
+            <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i> Deposit
+          </button>
+          <button class="btn btn-primary" onclick="openWithdrawModal()">
+            <i data-lucide="arrow-up-right" style="width: 16px; height: 16px;"></i> Withdraw
+          </button>
+        </div>
+      </header>
+
+      <!-- ================= PORTAL VIEW: OVERVIEW ================= -->
+      <section id="portal-overview-tab" class="portal-subview animated-fade-in">
+        <!-- Psychological Triggers: Urgency & Scarcity and Live Social Proof -->
+        <div class="fomo-banner glass-panel" style="margin-bottom: 24px; padding: 16px 24px; border-left: 4px solid var(--color-warning); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; background: rgba(245, 158, 11, 0.08);">
+          <div class="flex items-center gap-3">
+            <i data-lucide="flame" class="text-warning" style="width: 24px; height: 24px;"></i>
+            <div>
+              <div style="font-weight: 700; color: #ffffff; font-size: 0.95rem;">EXCLUSIVE: 72-Hour Referral Multiplier Node Active!</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Invite your contacts now. Earn <span class="text-success" style="font-weight: 600;">₹500 cash payout</span> transferred directly to your bank account for every verified contact who joins!</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="badge badge-danger" style="font-family: monospace;" id="fomo-timer">71:59:59</span>
+          </div>
+        </div>
+
+        <div class="social-proof-ticker glass-panel" style="margin-bottom: 24px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; overflow: hidden; background: rgba(16, 185, 129, 0.04); border-color: rgba(16, 185, 129, 0.15);">
+          <div class="flex items-center gap-2">
+            <i data-lucide="activity" class="text-success" style="width: 14px; height: 14px;"></i>
+            <span class="text-muted">Live Global Node Activity:</span>
+            <span id="social-proof-message" style="color: #ffffff; font-weight: 500;">Accredited Investor A.R. just secured a $25,000 algorithmic index allocation...</span>
+          </div>
+          <span class="badge badge-success">Live Sync</span>
+        </div>
+
+        <!-- Dashboard Balance Metrics Grid -->
+        <div class="dash-metrics">
+          <div class="metric-card glass-panel balance">
+            <div class="metric-header">
+              <span>Account Equity Valuation</span>
+              <i data-lucide="wallet" style="width: 16px; height: 16px; color: var(--color-primary);"></i>
+            </div>
+            <div class="metric-value" id="val-net-worth">$74,821.50</div>
+            <div class="metric-footer text-success">
+              <i data-lucide="arrow-up-right" style="width: 12px; height: 12px;"></i>
+              <span id="val-net-worth-change">+3.4% ($2,410.12 today)</span>
+            </div>
+          </div>
+
+          <div class="metric-card glass-panel gains">
+            <div class="metric-header">
+              <span>Total Simulated Gains</span>
+              <i data-lucide="dollar-sign" style="width: 16px; height: 16px; color: var(--color-success);"></i>
+            </div>
+            <div class="metric-value" id="val-total-gains">$12,892.40</div>
+            <div class="metric-footer text-success">
+              <i data-lucide="arrow-up-right" style="width: 12px; height: 12px;"></i>
+              <span>+18.42% All Time Accrual</span>
+            </div>
+          </div>
+
+          <div class="metric-card glass-panel assets">
+            <div class="metric-header">
+              <span>Available Cash Liquidity</span>
+              <i data-lucide="landmark" style="width: 16px; height: 16px; color: var(--color-info);"></i>
+            </div>
+            <div class="metric-value" id="val-cash-balance">$10,480.00</div>
+            <div class="metric-footer text-muted">
+              <span>Standard USD Vault</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance Chart Panel -->
+        <div class="chart-container glass-panel">
+          <div class="chart-header">
+            <div>
+              <h3 style="font-size: 1.15rem; margin-bottom: 4px;">Institutional Valuation Curve</h3>
+              <p class="text-muted" style="font-size: 0.8rem;">Visualizing integrated growth curves across portfolio segments</p>
+            </div>
+            <div class="chart-timeframes">
+              <button class="tf-btn" data-days="1">1D</button>
+              <button class="tf-btn" data-days="7">1W</button>
+              <button class="tf-btn active" data-days="30">1M</button>
+              <button class="tf-btn" data-days="365">1Y</button>
+              <button class="tf-btn" data-days="all">ALL</button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Bottom Grid: Allocation + Position Breakdowns -->
+        <div class="dash-bottom-grid">
+          <!-- Doughnut Chart Allocation -->
+          <div class="allocation-card glass-panel">
+            <h3 style="font-size: 1.1rem; margin-bottom: 12px;">Strategy Allocation</h3>
+            <div class="allocation-chart-wrapper">
+              <canvas id="allocationChart"></canvas>
+            </div>
+            <div class="allocation-legends" id="allocation-legend-box">
+              <!-- Dynamically structured legend details -->
+            </div>
+          </div>
+
+          <!-- Position Table List -->
+          <div class="assets-list-card glass-panel">
+            <h3 style="font-size: 1.1rem; margin-bottom: 16px;">Active Portfolio Positions</h3>
+            <div style="overflow-x: auto;">
+              <table class="assets-table">
+                <thead>
+                  <tr>
+                    <th>Strategy Fund</th>
+                    <th>Allocation</th>
+                    <th>Share Equity</th>
+                    <th>Simulated Yield</th>
+                  </tr>
+                </thead>
+                <tbody id="active-positions-body">
+                  <!-- Dynamically populated positions -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PORTFOLIO SUBVIEW: FUNDS CATALOG ================= -->
+      <section id="portal-investments-tab" class="portal-subview animated-fade-in hidden">
+        <div class="products-grid" id="funds-catalog-container">
+          <!-- Dynamically structured cards will render here -->
+        </div>
+      </section>
+
+      <!-- ================= PORTFOLIO SUBVIEW: TRADING TERMINAL ================= -->
+      <section id="portal-trading-tab" class="portal-subview animated-fade-in hidden">
+        <div class="terminal-layout">
+          <!-- Trading Center (Chart & Ticker Stats) -->
+          <div class="terminal-main">
+            <div class="terminal-card glass-panel">
+              <div class="terminal-ticker-bar">
+                <select class="term-ticker-select" id="terminal-ticker-picker">
+                  <option value="BTCUSD">BTC/USD (Bitcoin Index)</option>
+                  <option value="ETHUSD">ETH/USD (Ethereum Index)</option>
+                  <option value="APXUSD">APX/USD (Apex Horizon Token)</option>
+                </select>
+                <div class="flex gap-6" style="font-family: monospace; font-size: 0.9rem;">
+                  <div>Price: <span class="text-success" id="term-ticker-price">$62,820.00</span></div>
+                  <div>Change: <span class="text-success" id="term-ticker-change">+2.4%</span></div>
+                  <div>High: <span id="term-ticker-high">$63,100</span></div>
+                  <div>Low: <span id="term-ticker-low">$61,500</span></div>
+                </div>
+              </div>
+              <div class="terminal-chart-box">
+                <canvas id="tradingTerminalChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Order book grid layout -->
+            <div class="terminal-card glass-panel">
+              <h3 style="font-size: 1.05rem; margin-bottom: 16px;">Live Ledger Order Book</h3>
+              <div class="orderbook-grid">
+                <div class="ob-column">
+                  <h4>Buy Bids (USD)</h4>
+                  <div id="buy-bids-list">
+                    <!-- Dynamically generated rows -->
+                  </div>
+                </div>
+                <div class="ob-column">
+                  <h4>Sell Asks (USD)</h4>
+                  <div id="sell-asks-list">
+                    <!-- Dynamically generated rows -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trade Actions Form Sidebar -->
+          <div class="terminal-side">
+            <div class="glass-panel trade-panel">
+              <div class="trade-tabs">
+                <button class="trade-tab-btn buy active" onclick="switchTradeType('buy')">Buy / Long</button>
+                <button class="trade-tab-btn sell" onclick="switchTradeType('sell')">Sell / Short</button>
+              </div>
+              <div style="margin-bottom: 16px;">
+                <label class="form-label" style="display: block; margin-bottom: 6px;">Available Liquid Reserves</label>
+                <div style="font-size: 1.15rem; font-weight: 700; color: white;" id="trade-available-reserves">$10,480.00</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Order Type</label>
+                <select class="form-control" style="background: rgba(255, 255, 255, 0.04);">
+                  <option>Market Execute (Instant)</option>
+                  <option>Limit Trigger Order</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Buy Amount (USD)</label>
+                <div style="position: relative;">
+                  <span style="position: absolute; left: 16px; top: 12px; color: var(--text-muted); font-size: 0.95rem;">$</span>
+                  <input type="number" class="form-control" value="1000" id="trade-amount-input" style="padding-left: 28px;">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 24px;">
+                <label class="form-label">Calculated Asset Units</label>
+                <input type="text" class="form-control" style="background: rgba(255,255,255,0.02); border-color: transparent;" readonly id="trade-units-preview" value="0.0159 BTC">
+              </div>
+              <button class="btn btn-success" style="width: 100%; padding: 14px;" id="trade-execute-btn">Market Buy Order</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PORTFOLIO SUBVIEW: LEDGER TRANSACTIONS ================= -->
+      <section id="portal-transactions-tab" class="portal-subview animated-fade-in hidden">
+        <div class="glass-panel" style="padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-size: 1.1rem;">Transaction History Ledger</h3>
+            <button class="btn btn-secondary" onclick="exportTransactionCSV()">
+              <i data-lucide="download" style="width: 16px; height: 16px;"></i> Export CSV
+            </button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="assets-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Action Type</th>
+                  <th>Resource / Product</th>
+                  <th>Cash Volume</th>
+                  <th>Verification Status</th>
+                </tr>
+              </thead>
+              <tbody id="transaction-history-body">
+                <!-- Transaction log records rendered here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PORTFOLIO SUBVIEW: SETTINGS ================= -->
+      <section id="portal-settings-tab" class="portal-subview animated-fade-in hidden">
+        <div class="dash-bottom-grid">
+          <!-- Profile Card -->
+          <div class="glass-panel" style="padding: 24px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 16px;">Client Profile Verification</h3>
+            <div class="form-group">
+              <label class="form-label">Full Account Name</label>
+              <input type="text" class="form-control" id="settings-name" value="Alpha User">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Registered Email</label>
+              <input type="email" class="form-control" id="settings-email" value="alpha.investor@apexhorizon.com" readonly>
+            </div>
+            <div class="form-group">
+              <label class="form-label">KYC Verification Tier</label>
+              <div style="background: var(--color-success-glow); padding: 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2);" class="flex items-center gap-3">
+                <i data-lucide="check-circle" class="text-success" style="width: 20px; height: 20px;"></i>
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 600;" class="text-success">Verified Accredited Investor</div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary);">Unlimited withdrawal authorizations active</div>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="saveProfileSettings()" style="margin-top: 16px;">Save Profiles Settings</button>
+          </div>
+
+          <!-- Security and API Integrations -->
+          <div class="glass-panel" style="padding: 24px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 16px;">Institutional Integrations</h3>
+            <div class="form-group">
+              <label class="form-label">Active API Authentication Key</label>
+              <div class="flex gap-2">
+                <input type="password" class="form-control" style="font-family: monospace; font-size: 0.85rem;" value="ah_live_920a7b420cdef182049ba1925b" id="settings-api-key" readonly>
+                <button class="btn btn-secondary" onclick="toggleAPIKeyVisibility()" style="padding: 10px 14px;" title="Toggle Visibility">
+                  <i data-lucide="eye" style="width: 16px; height: 16px;" id="eye-icon"></i>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Multi-Factor Hardware Setup</label>
+              <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 500; color: white;">YubiKey OTP / Authenticator</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Required for high equity withdrawals</div>
+                </div>
+                <label style="position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer;">
+                  <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;" id="settings-2fa-toggle">
+                  <span style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--color-success); transition: .4s; border-radius: 34px;"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PORTAL SUBVIEW: AFFILIATE HUB ================= -->
+      <section id="portal-affiliate-tab" class="portal-subview animated-fade-in hidden">
+        <div class="dash-bottom-grid">
+          <!-- Referral Statistics and Link Card -->
+          <div class="glass-panel" style="padding: 24px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+              <div class="feature-icon-box" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); color: var(--color-success); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="gift"></i>
+              </div>
+              <div>
+                <h3 style="font-size: 1.25rem;">Viral Referral Engine</h3>
+                <p class="text-muted" style="font-size: 0.8rem;">Earn instantly by sharing institutional strategies with your network</p>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+              <label class="form-label">Your Unique Referral Node Link</label>
+              <div class="flex gap-2">
+                <input type="text" class="form-control" style="font-family: monospace; font-size: 0.85rem;" value="https://apexhorizon.capital/join/ah_ref_920" id="referral-link" readonly>
+                <button class="btn btn-secondary" onclick="copyReferralLink()" style="padding: 10px 14px;" title="Copy Link">
+                  <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Viral Invite Progression Tracker</label>
+              <div style="background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div class="flex justify-between" style="font-size: 0.85rem; margin-bottom: 8px;">
+                  <span>Accrued Referral Rewards</span>
+                  <span class="text-success" style="font-weight: 700;" id="ref-earned-lbl">₹500.00</span>
+                </div>
+                <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
+                  <div style="width: 50%; height: 100%; background: var(--color-success);" id="ref-progress-bar"></div>
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">
+                  Next unlock: <span style="font-weight: 600; color: white;">Platinum Tier Bonus (₹1,000)</span> at 5 successfully shared contacts.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Share to Contacts Form Card -->
+          <div class="glass-panel" style="padding: 24px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 16px;">Instant Contact Direct Dispatch</h3>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 20px;">
+              Instantly transmit secure credentials to your contacts to unlock standard **+₹500** bank transfers immediately upon registration.
+            </p>
+            <form id="referral-share-form" onsubmit="handleReferralShare(event)">
+              <div class="form-group">
+                <label class="form-label">Contact Name</label>
+                <input type="text" class="form-control" placeholder="John Smith" id="ref-contact-name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Contact Email Address</label>
+                <input type="email" class="form-control" placeholder="john.smith@domain.com" id="ref-contact-email" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Choose Strategy to Share</label>
+                <select class="form-control" id="ref-share-strategy">
+                  <option value="Apex Horizon Alpha Fund">Apex Horizon Alpha Fund (7.5% APY)</option>
+                  <option value="Quantum Growth VC Fund">Quantum Growth VC Fund (14.5% APY)</option>
+                  <option value="Digital Asset Frontier Fund">Digital Asset Frontier Fund (22.8% APY)</option>
+                </select>
+              </div>
+              <button class="btn btn-success" type="submit" style="width: 100%; padding: 12px; margin-top: 16px;">
+                <i data-lucide="share-2" style="width: 16px; height: 16px;"></i> Send Invitation & Claim Payout
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PORTAL SUBVIEW: MUTUAL FUNDS ================= -->
+      <section id="portal-mutualfunds-tab" class="portal-subview animated-fade-in hidden">
+        <div class="products-grid" id="mutual-funds-container">
+          <!-- Dynamically populated mutual fund cards -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- ================= AUTHENTICATION MODALS ================= -->
+  <!-- ======================================================== -->
+
+  <!-- REFERRAL ENGAGEMENT MODAL -->
+  <div class="modal-overlay" id="referral-engagement-modal">
+    <div class="modal-box glass-panel animated-fade-in" style="max-width: 500px; text-align: center; border: 1px solid rgba(16, 185, 129, 0.35); box-shadow: 0 0 30px rgba(16, 185, 129, 0.25);">
+      <div class="modal-header" style="justify-content: flex-end; margin-bottom: 10px;">
+        <button class="modal-close" onclick="closeModal('referral-engagement-modal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      
+      <div style="margin-bottom: 24px;">
+        <div style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); margin-bottom: 16px; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);">
+          <i data-lucide="gift" style="width: 36px; height: 36px;"></i>
+        </div>
+        <h2 style="font-size: 1.8rem; font-family: var(--font-heading); margin-bottom: 12px; background: linear-gradient(135deg, #ffffff 40%, #a7f3d0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Earn ₹500 Per Referral!
+        </h2>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; max-width: 400px; margin: 0 auto 20px auto;">
+          Invite friends to join Apex Horizon Capital. Earn <span class="text-success" style="font-weight: 700;">₹500 Rupees</span> for each signup, with payouts transferred **directly to your bank account** instantly!
+        </p>
+      </div>
+
+      <!-- Quick Steps visualization -->
+      <div class="modal-steps-grid">
+        <div style="background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <span style="font-size: 0.75rem; color: var(--color-primary); font-weight: bold; display: block; margin-bottom: 4px;">STEP 01</span>
+          <span style="font-size: 0.8rem; font-weight: 600; color: white; display: block; margin-bottom: 2px;">Share Link</span>
+          <span style="font-size: 0.7rem; color: var(--text-muted);">Send invite link to contacts</span>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <span style="font-size: 0.75rem; color: var(--color-success); font-weight: bold; display: block; margin-bottom: 4px;">STEP 02</span>
+          <span style="font-size: 0.8rem; font-weight: 600; color: white; display: block; margin-bottom: 2px;">They Verify</span>
+          <span style="font-size: 0.7rem; color: var(--text-muted);">Quick identity checks</span>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <span style="font-size: 0.75rem; color: var(--color-warning); font-weight: bold; display: block; margin-bottom: 4px;">STEP 03</span>
+          <span style="font-size: 0.8rem; font-weight: 600; color: white; display: block; margin-bottom: 2px;">Get Paid</span>
+          <span style="font-size: 0.7rem; color: var(--text-muted);">Direct bank transfer</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <button class="btn btn-primary" onclick="switchToLoginFromReferral()" style="width: 100%; padding: 14px; font-weight: 600; font-size: 1rem;">
+          <i data-lucide="log-in" style="width: 18px; height: 18px;"></i> Access Account to Get Started
+        </button>
+        <button class="btn btn-secondary" onclick="closeModal('referral-engagement-modal')" style="width: 100%; padding: 12px; font-size: 0.9rem;">
+          Explore Wealth Strategies
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT SIGN-IN MODAL -->
+  <div class="modal-overlay" id="signin-modal">
+    <div class="modal-box glass-panel animated-fade-in">
+      <div class="modal-header">
+        <h3 style="font-size: 1.4rem;">Client Authentication</h3>
+        <button class="modal-close" onclick="closeModal('signin-modal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <form id="signin-form" onsubmit="handleAuthSubmit(event, 'signin')">
+        <div class="form-group">
+          <label class="form-label">Account Email</label>
+          <input type="email" class="form-control" placeholder="investor@apexhorizon.com" required id="signin-email" value="alpha.investor@apexhorizon.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Security Password</label>
+          <input type="password" class="form-control" placeholder="••••••••" required id="signin-password" value="password123">
+        </div>
+        <div style="margin-bottom: 24px; font-size: 0.8rem; text-align: right;">
+          <a href="#" style="color: var(--text-secondary);">Forgot security credentials?</a>
+        </div>
+        <button class="btn btn-primary" type="submit" style="width: 100%; padding: 12px; margin-bottom: 16px;">Access Secure Portal</button>
+        <div class="auth-divider"><span>OR</span></div>
+        <button type="button" class="btn google-btn" onclick="startGoogleFlow()">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="google-icon"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
+          Sign in with Google
+        </button>
+        <div style="font-size: 0.85rem; text-align: center; color: var(--text-secondary); margin-top: 16px;">
+          Not registered yet? <span style="color: var(--color-primary); cursor: pointer; font-weight: 500;" onclick="switchModals('signin-modal', 'signup-modal')">Create an account</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CLIENT REGISTER MODAL -->
+  <div class="modal-overlay" id="signup-modal">
+    <div class="modal-box glass-panel animated-fade-in">
+      <div class="modal-header">
+        <h3 style="font-size: 1.4rem;">Institutional Registration</h3>
+        <button class="modal-close" onclick="closeModal('signup-modal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <form id="signup-form" onsubmit="handleAuthSubmit(event, 'signup')">
+        <div class="form-group">
+          <label class="form-label">Full Legal Name</label>
+          <input type="text" class="form-control" placeholder="Jane Doe" required id="signup-name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Email Address</label>
+          <input type="email" class="form-control" placeholder="investor@domain.com" required id="signup-email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Capital Target Tier</label>
+          <select class="form-control" id="signup-tier">
+            <option value="Standard Retail">$5,000 - $100,000</option>
+            <option value="Accredited Professional">$100,000 - $1,000,000</option>
+            <option value="Institutional Family Office">$1,000,000+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Security Password</label>
+          <input type="password" class="form-control" placeholder="••••••••" required id="signup-password">
+        </div>
+        <button class="btn btn-primary" type="submit" style="width: 100%; padding: 12px; margin-bottom: 16px;">Initiate Verification</button>
+        <div class="auth-divider"><span>OR</span></div>
+        <button type="button" class="btn google-btn" onclick="startGoogleFlow()">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="google-icon"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
+          Sign in with Google
+        </button>
+        <div style="font-size: 0.85rem; text-align: center; color: var(--text-secondary); margin-top: 16px;">
+          Existing client portfolio? <span style="color: var(--color-primary); cursor: pointer; font-weight: 500;" onclick="switchModals('signup-modal', 'signin-modal')">Log in here</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DUMMY GOOGLE AUTH MODAL -->
+  <div class="google-overlay" id="google-auth-modal">
+    <div class="google-box">
+      <!-- Step 1: Email -->
+      <div id="google-step-1" class="google-step active">
+        <div class="google-logo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" width="74" height="24">
+        </div>
+        <h1 class="google-h1">Sign in</h1>
+        <p class="google-p">Use your Google Account</p>
+        <div class="google-input-group">
+          <input type="email" id="google-email-input" class="google-input" placeholder=" " required>
+          <label class="google-label">Email or phone</label>
+        </div>
+        <div class="google-link">Forgot email?</div>
+        <div class="google-disclaimer">
+          Not your computer? Use Guest mode to sign in privately. <span class="google-link">Learn more</span>
+        </div>
+        <div class="google-actions">
+          <button type="button" class="google-btn-text" onclick="closeGoogleModal()">Create account</button>
+          <button type="button" class="google-btn-primary" onclick="googleNextStep(2)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Password -->
+      <div id="google-step-2" class="google-step hidden">
+        <div class="google-logo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" width="74" height="24">
+        </div>
+        <h1 class="google-h1">Welcome</h1>
+        <div class="google-user-pill">
+          <i data-lucide="user-circle" style="width: 20px; height: 20px; color: #5f6368;"></i>
+          <span id="google-user-email-display">user@gmail.com</span>
+          <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #5f6368;"></i>
+        </div>
+        <div class="google-input-group">
+          <input type="password" id="google-pwd-input" class="google-input" placeholder=" " required>
+          <label class="google-label">Enter your password</label>
+        </div>
+        <div class="google-link" style="margin-top: 10px;">Forgot password?</div>
+        <div class="google-actions" style="margin-top: 40px;">
+          <button type="button" class="google-btn-text" onclick="closeGoogleModal()">Cancel</button>
+          <button type="button" class="google-btn-primary" onclick="googleNextStep(3)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 3: 2FA -->
+      <div id="google-step-3" class="google-step hidden">
+        <div class="google-logo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" width="74" height="24">
+        </div>
+        <h1 class="google-h1">2-Step Verification</h1>
+        <p class="google-p" style="margin-bottom: 24px; font-size: 14px; color: #202124;">
+          To help keep your account safe, Google wants to make sure it's really you trying to sign in.
+        </p>
+        <div style="text-align: center; margin: 20px 0;">
+          <div class="google-spinner"></div>
+          <div style="margin-top: 20px; font-size: 18px; font-weight: 500; color: #1a73e8;">
+            Check your phone
+          </div>
+          <p style="margin-top: 8px; font-size: 14px; color: #5f6368;">
+            Google sent a notification to your phone. Tap <strong>Yes</strong> on the notification to continue.
+          </p>
+        </div>
+        <div class="google-actions" style="margin-top: 30px;">
+          <button type="button" class="google-btn-text" onclick="closeGoogleModal()">Cancel</button>
+          <button type="button" class="google-btn-text">Resend it</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTAL TRANSACTIONS SIMULATION DIALOGS (DEPOSIT / WITHDRAW MODAL) -->
+  <div class="modal-overlay" id="funding-modal">
+    <div class="modal-box glass-panel animated-fade-in">
+      <div class="modal-header">
+        <h3 id="funding-modal-title" style="font-size: 1.3rem;">Deposit Reserves</h3>
+        <button class="modal-close" onclick="closeModal('funding-modal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <form id="funding-form" onsubmit="handleFundingSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Reserve Asset Destination</label>
+          <input type="text" class="form-control" id="funding-dest" style="background: rgba(255,255,255,0.02);" readonly value="Apex USD Custody Vault">
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="funding-method-lbl">Funding Method</label>
+          <select class="form-control" id="funding-method">
+            <option value="Standard Bank Wire">ACH Wire Transfer (Institutional)</option>
+            <option value="Integrated Card Node">Integrated Visa/Mastercard Node</option>
+            <option value="Digital Ledger Address">Digital Cryptographic Ledger (USDC/USDT)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="funding-amount-lbl">Funding Capital (USD)</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 16px; top: 12px; color: var(--text-muted); font-size: 0.95rem;">$</span>
+            <input type="number" class="form-control" style="padding-left: 28px;" min="100" max="5000000" placeholder="10,000" id="funding-amount" required>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit" id="funding-submit-btn" style="width: 100%; padding: 12px; margin-top: 16px;">Authorize Wire Node</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PORTAL BUY/SELL DYNAMIC FUND CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="fund-trade-modal">
+    <div class="modal-box glass-panel animated-fade-in">
+      <div class="modal-header">
+        <h3 id="fund-trade-title" style="font-size: 1.3rem;">Apex Allocation Order</h3>
+        <button class="modal-close" onclick="closeModal('fund-trade-modal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <form id="fund-trade-form" onsubmit="handleFundTradeSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Strategy Product</label>
+          <input type="text" class="form-control" style="background: rgba(255,255,255,0.02); font-weight: 600;" id="fund-trade-name" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="fund-trade-direction-lbl">Order Action</label>
+          <input type="text" class="form-control" style="background: rgba(255,255,255,0.02); font-weight: 600;" id="fund-trade-direction" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Capital Size Allocation</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 16px; top: 12px; color: var(--text-muted); font-size: 0.95rem;">$</span>
+            <input type="number" class="form-control" style="padding-left: 28px;" placeholder="5,000" id="fund-trade-amount" required>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 6px;" id="fund-trade-limits-lbl">
+            Available liquidity: $10,480.00
+          </div>
+        </div>
+        <button class="btn btn-success" type="submit" id="fund-trade-submit-btn" style="width: 100%; padding: 12px; margin-top: 16px;">Execute Portfolio Allocation</button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ====================================================== -->
+  <!-- ================= SIMULATED SUPPORT CHATBOT ============ -->
+  <!-- ====================================================== -->
+  <div class="support-widget" id="live-support-widget">
+    <div class="support-chatbox glass-panel">
+      <div class="chatbox-header">
+        <div class="online-dot"></div>
+        <div class="chatbox-title">
+          <h4>Apex Assistant</h4>
+          <p><span class="online-dot" style="margin-right: 4px;"></span>Online</p>
+        </div>
+      </div>
+      <div class="chatbox-body" id="chatbox-messages-list">
+        <div class="msg msg-bot">
+          Welcome to Apex Horizon secure channel. I am your automated capital support coordinator. How may I assist your portfolio today?
+        </div>
+      </div>
+      <form class="chatbox-footer" id="support-chat-form" onsubmit="handleSupportSend(event)">
+        <input type="text" placeholder="Inquire about funds, security or KYC..." class="chat-input" id="chat-input-text">
+        <button class="chat-send" type="submit">
+          <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+        </button>
+      </form>
+    </div>
+    <div class="support-trigger" id="support-widget-trigger">
+      <i data-lucide="message-square" id="support-icon-normal"></i>
+      <i data-lucide="x" class="hidden" id="support-icon-active"></i>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-wrapper" style="position: fixed; bottom: 24px; left: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; max-width: 320px;">
+    <!-- Rendered dynamically -->
+  </div>
+
+
+  <!-- ================= THIRD PARTY CDNS ================= -->
+  <!-- ChartJS CDN for dashboard metrics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Main Logic Script -->
+  <script src="app.js"></script>
+</body>
+</html>
