@@ -56,9 +56,23 @@
       <p class="hero-subtitle">
         Deploy sophisticated hedge fund algorithms, direct venture assets, and global sustainable trusts with an intuitive institutional dashboard.
       </p>
-      <div class="flex items-center justify-center gap-4" style="margin-bottom: 60px;">
+      <div class="flex items-center justify-center gap-4" style="margin-bottom: 40px;">
         <button class="btn btn-primary btn-lg" onclick="openModal('signup-modal')">Open Account</button>
         <button class="btn btn-secondary btn-lg" onclick="scrollToElement('calculator')">Project Returns</button>
+      </div>
+
+      <!-- INLINE REFERRAL PROMO CARD -->
+      <div class="glass-panel" style="max-width: 600px; margin: 0 auto 50px auto; padding: 20px 24px; border: 1px solid rgba(16, 185, 129, 0.25); text-align: left; display: flex; align-items: center; gap: 16px; background: rgba(16, 185, 129, 0.04);">
+        <div style="width: 48px; height: 48px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-success); flex-shrink: 0;">
+          <i data-lucide="gift" style="width: 24px; height: 24px;"></i>
+        </div>
+        <div style="flex-grow: 1;">
+          <h4 style="font-size: 1rem; font-weight: 700; color: white; margin-bottom: 4px;">Active Referral Campaign</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin: 0;">
+            Earn <span class="text-success" style="font-weight: 700;">₹500 Rupees</span> per referral paid directly to your bank account instantly. 
+            <span style="color: var(--color-primary); cursor: pointer; font-weight: 600; text-decoration: underline;" onclick="openModal('signup-modal')">Register now to claim your referral link</span>.
+          </p>
+        </div>
       </div>
 
       <!-- ================= LIVE ACTIVITY STRIP ================= -->
@@ -864,56 +878,7 @@
   <!-- ================= AUTHENTICATION MODALS ================= -->
   <!-- ======================================================== -->
 
-  <!-- REFERRAL ENGAGEMENT MODAL -->
-  <div class="modal-overlay" id="referral-engagement-modal">
-    <div class="modal-box glass-panel animated-fade-in" style="max-width: 500px; text-align: center; border: 1px solid rgba(16, 185, 129, 0.35); box-shadow: 0 0 30px rgba(16, 185, 129, 0.25);">
-      <div class="modal-header" style="justify-content: flex-end; margin-bottom: 10px;">
-        <button class="modal-close" onclick="closeModal('referral-engagement-modal')">
-          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
-        </button>
-      </div>
-      
-      <div style="margin-bottom: 24px;">
-        <div style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); margin-bottom: 16px; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);">
-          <i data-lucide="gift" style="width: 36px; height: 36px;"></i>
-        </div>
-        <h2 style="font-size: 1.8rem; font-family: var(--font-heading); margin-bottom: 12px; background: linear-gradient(135deg, #ffffff 40%, #a7f3d0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-          Earn ₹500 Per Referral!
-        </h2>
-        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; max-width: 400px; margin: 0 auto 20px auto;">
-          Invite friends to join Apex Horizon Capital. Earn <span class="text-success" style="font-weight: 700;">₹500 Rupees</span> for each signup, with payouts transferred **directly to your bank account** instantly!
-        </p>
-      </div>
 
-      <!-- Quick Steps visualization -->
-      <div class="modal-steps-grid">
-        <div style="background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
-          <span style="font-size: 0.75rem; color: var(--color-primary); font-weight: bold; display: block; margin-bottom: 4px;">STEP 01</span>
-          <span style="font-size: 0.8rem; font-weight: 600; color: white; display: block; margin-bottom: 2px;">Share Link</span>
-          <span style="font-size: 0.7rem; color: var(--text-muted);">Send invite link to contacts</span>
-        </div>
-        <div style="background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
-          <span style="font-size: 0.75rem; color: var(--color-success); font-weight: bold; display: block; margin-bottom: 4px;">STEP 02</span>
-          <span style="font-size: 0.8rem; font-weight: 600; color: white; display: block; margin-bottom: 2px;">They Verify</span>
-          <span style="font-size: 0.7rem; color: var(--text-muted);">Quick identity checks</span>
-        </div>
-        <div style="background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
-          <span style="font-size: 0.75rem; color: var(--color-warning); font-weight: bold; display: block; margin-bottom: 4px;">STEP 03</span>
-          <span style="font-size: 0.8rem; font-weight: 600; color: white; display: block; margin-bottom: 2px;">Get Paid</span>
-          <span style="font-size: 0.7rem; color: var(--text-muted);">Direct bank transfer</span>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <button class="btn btn-primary" onclick="switchToLoginFromReferral()" style="width: 100%; padding: 14px; font-weight: 600; font-size: 1rem;">
-          <i data-lucide="log-in" style="width: 18px; height: 18px;"></i> Access Account to Get Started
-        </button>
-        <button class="btn btn-secondary" onclick="closeModal('referral-engagement-modal')" style="width: 100%; padding: 12px; font-size: 0.9rem;">
-          Explore Wealth Strategies
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- CLIENT SIGN-IN MODAL -->
   <div class="modal-overlay" id="signin-modal">

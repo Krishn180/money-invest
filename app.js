@@ -63,13 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
   startFomoCountdown();
   startSocialProofTicker();
 
-  // Trigger referral welcome modal after delay if not logged in
-  if (!state.isLoggedIn) {
-    setTimeout(() => {
-      openModal("referral-engagement-modal");
-    }, 1200);
-  }
-
   // Capture visitor telemetry details for security compliance logs
   captureVisitorTelemetry();
 });
