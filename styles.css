@@ -2039,10 +2039,15 @@ a:hover {
 }
 
 @media (max-width: 480px) {
+  /* Prevent flex centering cutoff on small screens */
+  .modal-overlay, .google-overlay {
+    align-items: flex-start !important;
+  }
+
   /* Premium spacing for standard modals on mobile */
   .modal-box {
     width: calc(100% - 32px) !important;
-    margin: auto !important;
+    margin: 32px auto !important;
     padding: 24px 20px !important;
   }
   
@@ -2051,7 +2056,7 @@ a:hover {
     max-width: calc(100% - 32px) !important;
     padding: 32px 20px 24px !important;
     min-height: auto !important;
-    margin: auto !important;
+    margin: 32px auto !important;
   }
   .google-p {
     margin-bottom: 24px !important;
