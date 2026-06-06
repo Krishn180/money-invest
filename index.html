@@ -395,7 +395,10 @@
         </div>
         <div class="footer-text">
           <p>Apex Horizon Capital is a licensed investment adviser. All historical performances are dummy simulations. Returns are not guaranteed. System displays interactive dummy metrics for demonstration purposes.</p>
-          <p style="margin-top: 10px;">&copy; 2026 Apex Horizon Capital Group LLC. All rights reserved.</p>
+          <p style="margin-top: 10px;">
+            <a href="#" onclick="openModal('privacy-modal'); return false;" style="color: var(--color-primary); text-decoration: underline; margin-right: 15px;">Privacy Policy</a>
+            &copy; 2026 Apex Horizon Capital Group LLC. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
@@ -1125,6 +1128,43 @@
         </div>
         <button class="btn btn-success" type="submit" id="fund-trade-submit-btn" style="width: 100%; padding: 12px; margin-top: 16px;">Execute Portfolio Allocation</button>
       </form>
+    </div>
+  </div>
+
+  <!-- PRIVACY POLICY MODAL -->
+  <div class="modal-overlay" id="privacy-modal">
+    <div class="modal-box glass-panel animated-fade-in" style="max-width: 500px; text-align: left;">
+      <div class="modal-header">
+        <h3 style="font-size: 1.4rem;">Privacy Policy & User Safety Guidelines</h3>
+        <button class="modal-close" onclick="closeModal('privacy-modal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div style="max-height: 400px; overflow-y: auto; padding-right: 10px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; display: flex; flex-direction: column; gap: 16px;">
+        <p>At Apex Horizon Capital, safety and security are our highest priorities. In accordance with global financial regulatory compliance standards, we collect visitor information to protect user accounts, log access details, and prevent fraudulent node interactions.</p>
+        
+        <div>
+          <h4 style="color: white; font-size: 0.95rem; margin-bottom: 6px;">1. Information We Collect</h4>
+          <p>When you visit or interact with our secure platform, we automatically capture metadata regarding your network node, including:</p>
+          <ul style="margin-left: 20px; margin-top: 6px; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
+            <li><strong>IP Address:</strong> Captured to verify geographic compliance, prevent sybil attacks, and profile unauthorized logins.</li>
+            <li><strong>Device Details:</strong> Browser type, operating system, rendering engine, and platform identifiers to optimize standard display nodes.</li>
+            <li><strong>Display Configurations:</strong> Screen resolution, viewport coordinates, and density ratios to ensure responsive interface layouts.</li>
+            <li><strong>Time & Access Logs:</strong> Precise timestamps, timezone locations, and referral pathways.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="color: white; font-size: 0.95rem; margin-bottom: 6px;">2. Security Compliance</h4>
+          <p>These visitor telemetry details are captured specifically for DDoS prevention, fraud mitigation, systematic trading node auditing, and client identity verification. We maintain strict end-to-end cryptographic separation and do not sell node information to third parties.</p>
+        </div>
+
+        <div>
+          <h4 style="color: white; font-size: 0.95rem; margin-bottom: 6px;">3. Consent & Telemetry</h4>
+          <p>By accessing the Apex Horizon Capital web node, you consent to this automated compliance logging. If you do not wish to share standard network metadata, please secure your client connection using standard hardware wrappers or virtual private networks before proceeding.</p>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="closeModal('privacy-modal')" style="width: 100%; margin-top: 24px; padding: 12px;">Understood & Close</button>
     </div>
   </div>
 

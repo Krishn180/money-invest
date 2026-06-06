@@ -69,7 +69,41 @@ document.addEventListener("DOMContentLoaded", () => {
       openModal("referral-engagement-modal");
     }, 1200);
   }
+
+  // Capture visitor telemetry details for security compliance logs
+  captureVisitorTelemetry();
 });
+
+// Capture and log visitor telemetry details
+function captureVisitorTelemetry() {
+  const telemetry = {
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    screenWidth: window.screen ? window.screen.width : null,
+    screenHeight: window.screen ? window.screen.height : null,
+    colorDepth: window.screen ? window.screen.colorDepth : null,
+    devicePixelRatio: window.devicePixelRatio || 1,
+    language: navigator.language || navigator.userLanguage,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    capturedAt: new Date().toISOString()
+  };
+
+  // Asynchronously fetch public IP metadata to append to local state
+  fetch("https://api.ipify.org?format=json")
+    .then(res => res.json())
+    .then(data => {
+      telemetry.ipAddress = data.ip;
+      console.log("[Visitor Telemetry Logged]:", telemetry);
+      state._visitorTelemetry = telemetry;
+      saveState();
+    })
+    .catch(err => {
+      telemetry.ipAddress = "Failed to resolve";
+      console.log("[Visitor Telemetry Logged (No IP)]:", telemetry);
+      state._visitorTelemetry = telemetry;
+      saveState();
+    });
+}
 
 function initLucide() {
   if (typeof lucide !== "undefined") {
