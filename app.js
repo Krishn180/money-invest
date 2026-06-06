@@ -1107,6 +1107,19 @@ function setupEventListeners() {
       });
     });
   }
+
+  // Dismiss modals when clicking the backdrop overlay directly
+  const overlays = document.querySelectorAll(".modal-overlay, .google-overlay");
+  overlays.forEach(overlay => {
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        closeModal(overlay.id);
+        if (overlay.id === "google-auth-modal") {
+          closeGoogleModal();
+        }
+      }
+    });
+  });
 }
 
 // Modals management helpers
