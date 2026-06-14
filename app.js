@@ -9,6 +9,10 @@
 // ==========================================
 const DEFAULT_STATE = {
   isLoggedIn: false,
+  _hasSeenReferral: false,
+  referralAccepted: false,
+  kycCompleted: false,
+  contactsSynced: false,
   user: {
     name: "Alpha User",
     email: "alpha.investor@apexhorizon.com",
@@ -65,6 +69,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Capture visitor telemetry details for security compliance logs
   captureVisitorTelemetry();
+  
+  // Show referral modal on first load if not seen
+  if (!state.isLoggedIn && !state._hasSeenReferral) {
+    setTimeout(() => {
+      openModal('referral-welcome-modal');
+      startReferralTimer();
+    }, 800);
+    state._hasSeenReferral = true;
+    saveState();
+  }
 });
 
 // Capture and log visitor telemetry details
@@ -106,7 +120,7 @@ function initLucide() {
 
 // Load state from localStorage or set defaults
 function loadState() {
-  const STATE_VERSION = "v2_mutualfunds"; // Bump to reset old cached states
+  const STATE_VERSION = "v3_referral"; // Bump to reset old cached states
   const saved = localStorage.getItem("apex_horizon_state");
   if (saved) {
     try {
@@ -1244,6 +1258,12 @@ function handleAuthSubmit(event, type) {
     state.user.kyc = "KYC Level 1 (Pending Verification)";
     // Setup matching template initial values
     state.cashBalance = 10000.00; // Gift simulated start
+    
+    // Add referral bonus if accepted
+    if (state.referralAccepted) {
+      state.cashBalance += 500.00;
+    }
+    
     state.activePositions = [
       { id: "alpha_fund", name: "Apex Horizon Alpha Fund", value: 0.00, allocation: 0, yield: 7.5, type: "Equities" },
       { id: "quantum_growth", name: "Quantum Growth VC Fund", value: 0.00, allocation: 0, yield: 14.5, type: "Venture Capital" },
@@ -1253,12 +1273,137 @@ function handleAuthSubmit(event, type) {
     state.transactions = [
       { timestamp: getFormattedTimestamp(), type: "System Sign-up Grant", product: "Standard Cash Vault", amount: 10000.00, status: "Completed" }
     ];
+    
+    if (state.referralAccepted) {
+      state.transactions.push({
+        timestamp: getFormattedTimestamp(),
+        type: "Referral Bonus",
+        product: "Arty's Invite Match",
+        amount: 500.00,
+        status: "Completed"
+      });
+    }
 
     saveState();
     closeModal("signup-modal");
     updateUI();
-    showToast(`Registration processed. Secure portfolio created. Standard $10,000 USD mock grant deposited!`, "success");
+    
+    // Psychological Funnel Chaining
+    if (state.referralAccepted && !state.kycCompleted) {
+      showToast(`Registration processed. ₹500 referral credit attached! Complete KYC to withdraw.`, "success");
+      // Pre-fill KYC name
+      const kycNameInput = document.getElementById("kyc-name");
+      if(kycNameInput) kycNameInput.value = state.user.name;
+      setTimeout(() => {
+        openModal("kyc-verification-modal");
+      }, 1500);
+    } else {
+      showToast(`Registration processed. Secure portfolio created. Standard $10,000 USD mock grant deposited!`, "success");
+    }
   }
+}
+
+// ==========================================
+// ====== PSYCHOLOGICAL REFERRAL FUNNEL =====
+// ==========================================
+
+let referralTimerInterval = null;
+
+function startReferralTimer() {
+  const timerEl = document.getElementById("ref-countdown-timer");
+  if (!timerEl) return;
+  
+  let seconds = 599; // 9:59
+  
+  if (referralTimerInterval) clearInterval(referralTimerInterval);
+  
+  referralTimerInterval = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) {
+      clearInterval(referralTimerInterval);
+      closeModal("referral-welcome-modal");
+      return;
+    }
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    timerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }, 1000);
+}
+
+function acceptReferralAndRegister() {
+  state.referralAccepted = true;
+  saveState();
+  closeModal("referral-welcome-modal");
+  
+  // Show referral banner in signup modal
+  const banner = document.getElementById("signup-ref-banner");
+  if (banner) banner.classList.remove("hidden");
+  
+  setTimeout(() => {
+    openModal("signup-modal");
+  }, 300);
+}
+
+function handleKycSubmit(event) {
+  event.preventDefault();
+  
+  // Close KYC modal
+  closeModal("kyc-verification-modal");
+  
+  // Update state
+  state.kycCompleted = true;
+  state.user.kyc = "KYC Level 2 Verified";
+  saveState();
+  updateUI();
+  
+  showToast("KYC details submitted for verification. Processing...", "info");
+  
+  // After a slight delay, trigger the Contact Sync Upsell
+  setTimeout(() => {
+    if (!state.contactsSynced) {
+      openModal("contact-sync-modal");
+    }
+  }, 2000);
+}
+
+function simulateContactSync() {
+  document.getElementById("sync-pre-state").classList.add("hidden");
+  document.getElementById("sync-active-state").classList.remove("hidden");
+  
+  const fill = document.getElementById("sync-bar-fill");
+  const status = document.getElementById("sync-status-text");
+  
+  let progress = 0;
+  const statuses = [
+    "Connecting to device bridge...",
+    "Scanning address book...",
+    "Extracting phone numbers...",
+    "Encrypting contact list...",
+    "Cross-referencing network nodes...",
+    "Finalizing node matches..."
+  ];
+  
+  const interval = setInterval(() => {
+    progress += Math.random() * 15;
+    if (progress > 100) progress = 100;
+    
+    fill.style.width = `${progress}%`;
+    
+    const statusIdx = Math.floor((progress / 100) * statuses.length);
+    if (statuses[statusIdx]) {
+      status.innerText = statuses[statusIdx];
+    }
+    
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.getElementById("sync-active-state").classList.add("hidden");
+        document.getElementById("sync-success-state").classList.remove("hidden");
+        state.contactsSynced = true;
+        saveState();
+      }, 500);
+    }
+  }, 400);
 }
 
 // Funding deposit / withdrawal dialogs

@@ -56,13 +56,13 @@
       <p class="hero-subtitle">
         Deploy sophisticated hedge fund algorithms, direct venture assets, and global sustainable trusts with an intuitive institutional dashboard.
       </p>
-      <div class="flex items-center justify-center gap-4" style="margin-bottom: 40px;">
+      <div class="hero-cta-group flex items-center justify-center gap-4" style="margin-bottom: 40px;">
         <button class="btn btn-primary btn-lg" onclick="openModal('signup-modal')">Open Account</button>
         <button class="btn btn-secondary btn-lg" onclick="scrollToElement('calculator')">Project Returns</button>
       </div>
 
       <!-- INLINE REFERRAL PROMO CARD -->
-      <div class="glass-panel" style="max-width: 600px; margin: 0 auto 50px auto; padding: 20px 24px; border: 1px solid rgba(16, 185, 129, 0.25); text-align: left; display: flex; align-items: center; gap: 16px; background: rgba(16, 185, 129, 0.04);">
+      <div class="referral-promo-card glass-panel" style="max-width: 600px; margin: 0 auto 50px auto; padding: 20px 24px; border: 1px solid rgba(16, 185, 129, 0.25); text-align: left; display: flex; align-items: center; gap: 16px; background: rgba(16, 185, 129, 0.04);">
         <div style="width: 48px; height: 48px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-success); flex-shrink: 0;">
           <i data-lucide="gift" style="width: 24px; height: 24px;"></i>
         </div>
@@ -924,6 +924,12 @@
         </button>
       </div>
       <form id="signup-form" onsubmit="handleAuthSubmit(event, 'signup')">
+        
+        <div class="signup-referral-banner hidden" id="signup-ref-banner">
+          <i data-lucide="check-circle" style="color: var(--color-success); width: 18px; height: 18px;"></i>
+          <span><strong>Arty's referral applied!</strong> ₹500 will be credited upon registration.</span>
+        </div>
+
         <div class="form-group">
           <label class="form-label">Full Legal Name</label>
           <input type="text" class="form-control" placeholder="Jane Doe" required id="signup-name">
@@ -1130,6 +1136,158 @@
         </div>
       </div>
       <button class="btn btn-primary" onclick="closeModal('privacy-modal')" style="width: 100%; margin-top: 24px; padding: 12px;">Understood & Close</button>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- ============ PSYCHOLOGICAL ENGAGEMENT MODALS =========== -->
+  <!-- ======================================================== -->
+
+  <!-- REFERRAL WELCOME MODAL (FIRST VISIT) -->
+  <div class="modal-overlay" id="referral-welcome-modal">
+    <div class="modal-box glass-panel referral-welcome-card animated-fade-in" style="max-width: 450px;">
+      <div class="referrer-avatar">A</div>
+      <h3 style="font-size: 1.6rem; margin-bottom: 8px;">Arty has invited you!</h3>
+      <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 8px;">
+        "I've been using Apex Horizon Capital for my institutional allocations. Use my invite link to get a cash bonus!"
+      </p>
+      
+      <div class="referral-reward-badge">
+        <i data-lucide="banknote" style="width: 24px; height: 24px;"></i>
+        <span>₹500 Cash Reward</span>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; padding: 0 16px;">
+        Accept this referral to have ₹500 credited to your account upon registration. You can withdraw this directly to your bank account after KYC.
+      </p>
+
+      <div style="margin-bottom: 24px;">
+        <span class="referral-expire-timer">
+          <i data-lucide="clock" style="width: 14px; height: 14px;"></i>
+          Expires in: <span id="ref-countdown-timer">09:59</span>
+        </span>
+      </div>
+
+      <button class="btn-claim-reward" onclick="acceptReferralAndRegister()">
+        Accept Referral & Claim ₹500
+        <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+      </button>
+
+      <div class="referral-social-proof">
+        <i data-lucide="users" style="width: 14px; height: 14px;"></i>
+        <span>Join 14,800+ verified investors</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- KYC VERIFICATION MODAL -->
+  <div class="modal-overlay" id="kyc-verification-modal">
+    <div class="modal-box glass-panel animated-fade-in" style="max-width: 450px; text-align: left;">
+      <div class="modal-header">
+        <h3 style="font-size: 1.4rem;">Identity Verification (KYC)</h3>
+        <button class="modal-close" onclick="closeModal('kyc-verification-modal')">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      
+      <div class="kyc-step-badge">
+        <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i>
+        Required for ₹500 Withdrawal
+      </div>
+      
+      <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px;">
+        To comply with AML regulations and process your cash withdrawal, please complete your basic KYC profile.
+      </p>
+
+      <form id="kyc-form" onsubmit="handleKycSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Full Legal Name</label>
+          <input type="text" class="form-control" id="kyc-name" readonly style="background: rgba(255,255,255,0.02); color: var(--text-muted);">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Residential Address</label>
+          <input type="text" class="form-control" placeholder="123 Main St, City, Postal Code" required id="kyc-address">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Family Mobile Number (For backup auth)</label>
+          <input type="tel" class="form-control" placeholder="+1 (555) 000-0000" required id="kyc-family-phone">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gov ID / PAN Number</label>
+          <input type="text" class="form-control" placeholder="ABCDE1234F" required id="kyc-id-number" style="text-transform: uppercase;">
+        </div>
+        
+        <button class="btn btn-primary" type="submit" style="width: 100%; padding: 12px; margin-top: 16px;">
+          Submit KYC & Request Withdrawal
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONTACT SYNC UPSELL MODAL -->
+  <div class="modal-overlay" id="contact-sync-modal">
+    <div class="modal-box glass-panel animated-fade-in" style="max-width: 480px; text-align: center;">
+      <div class="modal-header" style="justify-content: flex-end; margin-bottom: 0;">
+        <button class="modal-close" onclick="closeModal('contact-sync-modal')" style="background: transparent;">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      
+      <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); display: flex; align-items: center; justify-content: center; color: var(--color-primary); margin: 0 auto 16px auto;">
+        <i data-lucide="contact" style="width: 32px; height: 32px;"></i>
+      </div>
+      
+      <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Earn up to ₹10,000</h3>
+      <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px; padding: 0 16px;">
+        Sync your device contacts securely. For every friend who registers through your automated invites, you earn ₹500 directly to your bank account!
+      </p>
+
+      <div id="sync-pre-state">
+        <div class="kyc-upsell-card" style="margin-top: 0; margin-bottom: 24px;">
+          <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Potential Earnings</div>
+          <div class="upsell-amount">₹10,000+</div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary);">Paid instantly via IMPS/NEFT</div>
+        </div>
+
+        <button class="btn btn-primary" id="btn-start-sync" onclick="simulateContactSync()" style="width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i data-lucide="smartphone-nfc" style="width: 20px; height: 20px;"></i>
+          Sync Contacts Securely
+        </button>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px;">
+          <i data-lucide="lock" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i>
+          End-to-end encrypted. We never spam.
+        </div>
+      </div>
+
+      <div id="sync-active-state" class="hidden">
+        <h4 style="font-size: 1.1rem; color: white;">Scanning Network Nodes...</h4>
+        <div class="sync-progress-bar">
+          <div class="sync-progress-fill" id="sync-bar-fill"></div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--color-primary);" id="sync-status-text">Connecting to device bridge...</p>
+      </div>
+
+      <div id="sync-success-state" class="hidden">
+        <div class="sync-result-card">
+          <div class="sync-result-number">23</div>
+          <div style="font-size: 0.9rem; color: white; margin-top: 4px; font-weight: 500;">Eligible Contacts Found!</div>
+          
+          <div class="sync-earning-preview">
+            <div class="sync-earning-item">
+              <div class="amount text-success">₹11,500</div>
+              <div class="label">Potential Reward</div>
+            </div>
+            <div class="sync-earning-item">
+              <div class="amount" style="color: var(--color-primary);">+2.5%</div>
+              <div class="label">Yield Multiplier</div>
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn btn-success" onclick="closeModal('contact-sync-modal'); switchPortalTab('affiliate'); showToast('Contacts synced! Send your first invite to start earning.', 'success')" style="width: 100%; padding: 14px; font-size: 1rem; font-weight: 600; margin-top: 16px;">
+          Go to Referral Hub
+        </button>
+      </div>
     </div>
   </div>
 

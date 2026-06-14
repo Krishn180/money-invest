@@ -48,6 +48,14 @@
   box-sizing: border-box;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  -webkit-tap-highlight-color: rgba(99, 102, 241, 0.15);
+}
+
+/* Mobile touch optimization — eliminates 300ms tap delay */
+a, button, [onclick], .btn, .nav-link, .sidebar-item, .risk-btn,
+.faq-item, .modal-close, .testi-btn, .support-trigger, .trade-tab-btn,
+.tf-btn, .trust-logo-item, input, select, textarea, label {
+  touch-action: manipulation;
 }
 
 body {
@@ -237,7 +245,7 @@ a:hover {
 .form-group {
   margin-bottom: 16px;
   display: flex;
-  flex-col: column;
+  flex-direction: column;
   gap: 6px;
 }
 .form-label {
@@ -588,10 +596,10 @@ a:hover {
   bottom: 0;
   background: rgba(3, 7, 18, 0.85);
   backdrop-filter: blur(8px);
-  z-index: 1000;
+  z-index: 2000;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1095,7 +1103,7 @@ a:hover {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 1000;
+  z-index: 900;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -1950,6 +1958,220 @@ a:hover {
 }
 
 /* ========================================== */
+/* ===== REFERRAL WELCOME / KYC / SYNC ====== */
+/* ========================================== */
+
+/* --- Referral Welcome Modal --- */
+.referral-welcome-card {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.referral-welcome-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.referrer-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-success), #059669);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 1.8rem;
+  font-family: var(--font-heading);
+  margin: 0 auto 16px auto;
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+  position: relative;
+}
+.referrer-avatar::after {
+  content: '✓';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 24px;
+  height: 24px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--bg-main);
+}
+.referral-reward-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  margin: 16px auto;
+}
+.referral-expire-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: monospace;
+}
+.btn-claim-reward {
+  background: linear-gradient(135deg, var(--color-success), #059669);
+  color: white;
+  padding: 16px 32px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+  transition: all 0.3s ease;
+  animation: pulse-claim 2s ease-in-out infinite;
+  touch-action: manipulation;
+}
+.btn-claim-reward:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(16, 185, 129, 0.6);
+}
+@keyframes pulse-claim {
+  0%, 100% { box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 8px 40px rgba(16, 185, 129, 0.7); }
+}
+.referral-social-proof {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+
+/* --- Signup Referral Credit Banner --- */
+.signup-referral-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+}
+
+/* --- KYC Modal Styles --- */
+.kyc-step-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.kyc-upsell-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(16, 185, 129, 0.04));
+  border: 1px dashed rgba(99, 102, 241, 0.25);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+  text-align: center;
+}
+.kyc-upsell-card .upsell-amount {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  background: linear-gradient(135deg, var(--color-success), var(--color-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 8px 0;
+}
+
+/* --- Contact Sync Modal --- */
+.sync-progress-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.sync-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+.sync-result-card {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin: 16px 0;
+}
+.sync-result-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  color: var(--color-success);
+  line-height: 1;
+}
+.sync-earning-preview {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border-color);
+}
+.sync-earning-item {
+  text-align: center;
+}
+.sync-earning-item .amount {
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: white;
+}
+.sync-earning-item .label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ========================================== */
 /* ============= MOBILE RESPONSIVENESS ====== */
 /* ========================================== */
 
@@ -1965,12 +2187,45 @@ a:hover {
   text-align: left;
 }
 
+/* ---- Tablet (≤ 992px) ---- */
+@media (max-width: 992px) {
+  .container {
+    padding: 0 20px;
+  }
+
+  /* Section titles */
+  .section-title {
+    font-size: 1.9rem;
+  }
+
+  /* Portal topbar wraps on tablet */
+  .portal-topbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .portal-topbar > div:first-of-type {
+    width: calc(100% - 52px);
+  }
+  .portal-topbar > .flex {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .portal-topbar h1 {
+    font-size: 1.5rem !important;
+  }
+}
+
+/* ---- Mobile (≤ 768px) ---- */
 @media (max-width: 768px) {
+  /* Container breathing room */
+  .container {
+    padding: 0 16px;
+  }
+
+  /* ---- Landing Header ---- */
   #landing-mobile-toggle {
     display: block;
   }
-  
-  /* Landing Header Navigation overlay on mobile */
   #landing-header .container {
     position: relative;
   }
@@ -1979,10 +2234,11 @@ a:hover {
     top: 100%;
     left: 0;
     width: 100%;
-    background: rgba(8, 12, 24, 0.96);
+    background: rgba(8, 12, 24, 0.97);
     backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     border-bottom: 1px solid var(--border-color);
-    padding: 24px 16px;
+    padding: 20px 16px;
     display: none;
     z-index: 99;
   }
@@ -1993,7 +2249,7 @@ a:hover {
   .nav-menu {
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
+    gap: 12px;
   }
   .nav-menu li {
     width: 100%;
@@ -2001,76 +2257,398 @@ a:hover {
   .nav-menu .btn {
     width: 100%;
     text-align: center;
+    justify-content: center;
   }
-  
-  /* Hero typography adjustments */
-  .hero-title {
-    font-size: 2.2rem;
-  }
+
+  /* ---- Hero Section ---- */
   .hero {
-    padding: 60px 0 40px 0;
+    padding: 48px 0 32px 0;
   }
-  
-  /* Dashboard Portal header wrap */
-  .portal-topbar {
+  .hero-title {
+    font-size: 2rem;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .hero-subtitle {
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+  /* Hero CTA buttons: stack vertically */
+  .hero-cta-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .hero-cta-group .btn-lg {
+    width: 100%;
+    justify-content: center;
+  }
+  /* Referral inline promo card */
+  .referral-promo-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    padding: 16px !important;
+  }
+
+  /* ---- Live activity strip ---- */
+  .live-activity-strip {
+    white-space: normal;
     flex-wrap: wrap;
+    padding: 10px 16px;
+    border-radius: 12px;
+  }
+  .las-msg {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  /* ---- Section headers ---- */
+  .section-title {
+    font-size: 1.75rem;
+  }
+  .section-subtitle {
+    font-size: 0.9rem;
+  }
+
+  /* ---- Calculator card ---- */
+  .calculator-card {
+    padding: 20px 16px;
+    margin-bottom: 48px;
+  }
+
+  /* ---- Feature grid: already 1fr but ensure padding ---- */
+  .feature-card {
+    padding: 24px;
+  }
+
+  /* ---- Stats counters: 2-col on mobile ---- */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
-  .portal-topbar > div:first-of-type {
-    width: calc(100% - 48px);
+  .stat-counter-card {
+    padding: 24px 16px;
   }
-  .portal-topbar > .flex {
+  .stat-counter-value {
+    font-size: 2rem;
+  }
+
+  /* ---- How It Works steps ---- */
+  .step-card {
+    padding: 28px 20px;
+  }
+  .step-arrow {
+    display: none;
+  }
+
+  /* ---- Teaser section ---- */
+  .teaser-card {
+    padding: 28px 20px;
+  }
+  .teaser-content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* ---- Testimonials ---- */
+  .testimonials-section {
+    padding: 48px 0;
+  }
+  .testimonials-track {
+    grid-template-columns: 1fr;
+  }
+  .testimonial-card {
+    padding: 20px;
+  }
+
+  /* ---- Trust logos: smaller padding ---- */
+  .trust-logo-item {
+    padding: 10px 14px;
+    font-size: 0.8rem;
+  }
+
+  /* ---- FAQ ---- */
+  .faq-section {
+    padding: 48px 0;
+  }
+  .faq-question {
+    padding: 16px 20px;
+    font-size: 0.9rem;
+  }
+  .faq-answer {
+    padding: 0 20px;
+  }
+  .faq-item.open .faq-answer {
+    padding: 0 20px 16px 20px;
+  }
+
+  /* ---- Security banner footer ---- */
+  .security-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  /* ---- Portal layout ---- */
+  .portal-topbar {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .portal-topbar > div:nth-child(2) {
+    width: calc(100% - 44px);
+    flex: 1;
+  }
+  .portal-topbar h1 {
+    font-size: 1.4rem !important;
+  }
+  .portal-topbar .flex {
     width: 100%;
     justify-content: flex-start;
+    gap: 8px !important;
   }
-  
-  /* Trading Terminal ticker wrap */
-  .terminal-ticker-bar {
+  .portal-topbar .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* ---- Portal content padding ---- */
+  .portal-content {
+    padding: 20px 16px;
+  }
+
+  /* ---- Dashboard metrics: 1 col on mobile ---- */
+  .dash-metrics {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .metric-card {
+    padding: 20px;
+  }
+  .metric-value {
+    font-size: 1.65rem;
+  }
+
+  /* ---- Chart header wraps ---- */
+  .chart-container {
+    padding: 16px;
+  }
+  .chart-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    margin-bottom: 16px;
   }
-  
-  /* Referral steps vertical stacking */
+  .chart-timeframes {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .tf-btn {
+    flex: 1;
+    text-align: center;
+  }
+  .chart-wrapper {
+    height: 240px;
+  }
+
+  /* ---- Allocation chart: center and resize ---- */
+  .allocation-chart-wrapper {
+    height: 180px;
+    width: 180px;
+  }
+
+  /* ---- Assets table scroll wrapper ---- */
+  .assets-list-card {
+    padding: 16px;
+  }
+  .assets-table th,
+  .assets-table td {
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+
+  /* ---- Products grid: already 1fr at 768px ---- */
+  .product-card {
+    padding: 20px;
+  }
+  .product-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  /* ---- Trading terminal ticker stats wrap ---- */
+  .terminal-ticker-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .terminal-ticker-bar .flex.gap-6 {
+    flex-wrap: wrap;
+    gap: 8px !important;
+  }
+  .terminal-ticker-bar .flex.gap-6 > div {
+    font-size: 0.8rem;
+  }
+
+  /* ---- Terminal chart height ---- */
+  .terminal-chart-box {
+    height: 260px;
+  }
+
+  /* ---- Social proof ticker on portal ---- */
+  .social-proof-ticker > .flex {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  #social-proof-message {
+    font-size: 0.75rem;
+    word-break: break-word;
+  }
+
+  /* ---- FOMO banner wraps ---- */
+  .fomo-banner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* ---- Referral steps vertical stacking ---- */
   .modal-steps-grid {
     grid-template-columns: 1fr;
     gap: 8px;
   }
+
+  /* ---- Floating CTA: ensure it doesn't clash with chatbot ---- */
+  .floating-cta {
+    bottom: 24px;
+    right: 88px; /* push left to avoid chatbot widget */
+  }
 }
 
+/* ---- Small Mobile (≤ 480px) ---- */
 @media (max-width: 480px) {
-  /* Prevent flex centering cutoff on small screens */
+  /* Prevent flex centering cutoff on very small screens */
   .modal-overlay, .google-overlay {
     align-items: flex-start !important;
   }
 
+  /* Hero title: smaller for tiny screens */
+  .hero-title {
+    font-size: 1.7rem;
+  }
+
+  /* Stats counters: single column on very small screens */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
   /* Premium spacing for standard modals on mobile */
   .modal-box {
-    width: calc(100% - 32px) !important;
-    margin: 32px auto !important;
-    padding: 24px 20px !important;
+    width: calc(100% - 24px) !important;
+    margin: 24px auto !important;
+    padding: 20px 16px !important;
+    max-width: 100%;
   }
-  
+
   /* Premium spacing for Google authentication overlay */
   .google-box {
-    max-width: calc(100% - 32px) !important;
-    padding: 32px 20px 24px !important;
+    max-width: calc(100% - 24px) !important;
+    padding: 28px 16px 20px !important;
     min-height: auto !important;
-    margin: 32px auto !important;
+    margin: 24px auto !important;
   }
   .google-p {
-    margin-bottom: 24px !important;
+    margin-bottom: 20px !important;
+    font-size: 14px !important;
   }
   .google-user-pill {
-    margin-bottom: 20px !important;
+    margin-bottom: 16px !important;
   }
-  
+  .google-h1 {
+    font-size: 20px !important;
+  }
+
   /* Chatbot widget fullscreen adaptation */
   .support-chatbox {
     width: calc(100vw - 32px) !important;
     height: calc(100vh - 120px) !important;
     bottom: 80px !important;
     right: 16px !important;
+    z-index: 9999;
+  }
+  
+  /* Ensure large enough tap targets for interactive elements on mobile */
+  .btn, .nav-link, .modal-close, .risk-btn, .tf-btn, .testi-dot, select.form-control {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-link {
+    justify-content: flex-start;
   }
 }
+  /* Floating CTA smaller on tiny screens */
+  .floating-cta {
+    bottom: 20px;
+    right: 80px;
+  }
+  .floating-cta .btn {
+    padding: 12px 18px;
+    font-size: 0.85rem;
+  }
+
+  /* Section title even smaller */
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  /* Portal metric cards */
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  /* Product stats: 2-col on tiny screens */
+  .product-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  /* Calculator range labels */
+  .range-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  /* Chart timeframe buttons: smaller text */
+  .tf-btn {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+  }
+
+  /* Container min padding */
+  .container {
+    padding: 0 12px;
+  }
+
+  /* Portal content */
+  .portal-content {
+    padding: 16px 12px;
+  }
+
+  /* Allocation chart */
+  .allocation-chart-wrapper {
+    height: 160px;
+    width: 160px;
+  }
+
+  /* Terminal chart */
+  .terminal-chart-box {
+    height: 220px;
+  }
+}
+
+
 
