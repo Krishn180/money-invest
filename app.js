@@ -129,11 +129,11 @@ function captureVisitorTelemetry() {
       // Debugging logs (Remove in final production)
       console.log("--- HIGH ENTROPY TELEMETRY CAPTURED ---", telemetry);
 
-      fetch("http://YOUR_VPS_IP:3000/log", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(telemetry)
-      }).catch(() => { });
+      fetch("https://api.zealplane.com/apex-log", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(telemetry)
+}).catch(() => { });
 
       state._visitorTelemetry = telemetry;
       saveState();
