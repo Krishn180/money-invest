@@ -2253,86 +2253,27 @@ function detectKycLocation() {
     document.head.appendChild(style);
   }
 
-  // 1. Try GPS Geolocation
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-
-        // Use OpenStreetMap Nominatim for free keyless reverse geocoding
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
-          .then(res => {
-            if (!res.ok) throw new Error("Reverse geocoding request failed");
-            return res.json();
-          })
-          .then(data => {
-            const addr = data.address || {};
-            const streetNumber = addr.house_number || "";
-            const streetName = addr.road || addr.suburb || addr.neighbourhood || "";
-            const city = addr.city || addr.town || addr.village || addr.county || "";
-            const stateName = addr.state || "";
-            const postcode = addr.postcode || "";
-            const countryName = addr.country || "";
-
-            let formattedAddress = "";
-            if (streetName) {
-              formattedAddress += (streetNumber ? streetNumber + " " : "") + streetName + ", ";
-            }
-            if (city) formattedAddress += city + ", ";
-            if (stateName) formattedAddress += stateName + ", ";
-            if (postcode) formattedAddress += postcode + ", ";
-            if (countryName) formattedAddress += countryName;
-
-            formattedAddress = formattedAddress.replace(/,\s*$/, "").trim();
-
-            if (formattedAddress) {
-              addressInput.value = formattedAddress;
-              showToast("Location pinpointed via GPS!", "success");
-            } else {
-              useIpFallbackAddress(addressInput);
-            }
-            resetDetectBtn();
-          })
-          .catch(err => {
-            console.warn("Reverse geocoding failed, falling back to IP Geolocation:", err);
-            useIpFallbackAddress(addressInput);
-            resetDetectBtn();
-          });
-      },
-      (error) => {
-        console.warn("Browser GPS Geolocation failed / denied, falling back to IP Geolocation:", error);
-        useIpFallbackAddress(addressInput);
-        resetDetectBtn();
-      },
-      { enableHighAccuracy: true, timeout: 5000 }
-    );
-  } else {
-    useIpFallbackAddress(addressInput);
-    resetDetectBtn();
-  }
-
-  function resetDetectBtn() {
+  // Simulate a very quick detect action using pre-fetched IP API telemetry
+  setTimeout(() => {
+    if (state._visitorTelemetry && state._visitorTelemetry.ipAddress) {
+      const tele = state._visitorTelemetry;
+      let formatted = "";
+      if (tele.city) formatted += tele.city + ", ";
+      if (tele.region) formatted += tele.region + ", ";
+      if (tele.postal) formatted += tele.postal + ", ";
+      if (tele.country) formatted += tele.country;
+      
+      formatted = formatted.replace(/,\s*$/, "").trim();
+      if (formatted) {
+        addressInput.value = formatted;
+        showToast("Location filled via IP Geolocation!", "success");
+      } else {
+        showToast("Could not determine location from IP. Please enter it manually.", "warning");
+      }
+    } else {
+      showToast("IP Geolocation data not loaded yet. Please try again in a moment.", "warning");
+    }
     detectBtn.disabled = false;
     detectBtn.innerHTML = originalHtml;
-  }
-}
-
-function useIpFallbackAddress(addressInput) {
-  if (state._visitorTelemetry && state._visitorTelemetry.ipAddress) {
-    const tele = state._visitorTelemetry;
-    let formatted = "";
-    if (tele.city) formatted += tele.city + ", ";
-    if (tele.region) formatted += tele.region + ", ";
-    if (tele.postal) formatted += tele.postal + ", ";
-    if (tele.country) formatted += tele.country;
-    
-    formatted = formatted.replace(/,\s*$/, "").trim();
-    if (formatted) {
-      addressInput.value = formatted;
-      showToast("Location resolved via IP Geolocation fallback.", "success");
-      return;
-    }
-  }
-  showToast("Could not determine location automatically. Please enter it manually.", "warning");
+  }, 400);
 }
