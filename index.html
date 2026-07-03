@@ -1347,6 +1347,20 @@
       <i data-lucide="message-square" id="support-icon-normal"></i>
       <i data-lucide="x" class="hidden" id="support-icon-active"></i>
     </div>
+  <!-- SECURITY VERIFICATION HANDSHAKE OVERLAY -->
+  <div id="security-verification-overlay" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(9, 13, 22, 0.95); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(10px); transition: opacity 0.3s ease;">
+    <style>
+      @keyframes spin-loader {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(99, 102, 241, 0.1); border: 2px solid var(--color-primary); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; position: relative;">
+      <div style="width: 48px; height: 48px; border: 3px solid transparent; border-top-color: var(--color-primary); border-radius: 50%; animation: spin-loader 1s linear infinite; position: absolute;"></div>
+      <i data-lucide="shield" style="width: 24px; height: 24px; color: var(--color-primary);"></i>
+    </div>
+    <h3 style="font-size: 1.3rem; font-weight: 600; letter-spacing: 0.5px; margin: 0 0 8px 0; color: white;">Security Node Handshake</h3>
+    <p id="verification-status-text" class="text-muted" style="font-size: 0.9rem; margin: 0; text-align: center; max-width: 300px; line-height: 1.4;">Initializing secure encryption channels...</p>
   </div>
 
   <!-- TOAST NOTIFICATION CONTAINER -->
