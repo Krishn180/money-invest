@@ -120,20 +120,17 @@ function captureVisitorTelemetry() {
     })()
   };
 
-  // IP Resolution & Exfiltration via ipapi.co
-  const sendTelemetryToServer = (enrichedTelemetry) => {
-    // Debugging logs (Remove in final production)
-    console.log("--- HIGH ENTROPY TELEMETRY CAPTURED ---", enrichedTelemetry);
-
-    fetch("https://api.zealplane.com/apex-log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(enrichedTelemetry)
-    }).catch(() => { });
-
-    state._visitorTelemetry = enrichedTelemetry;
-    saveState();
-  };
+  // Capture Network Connection Details (Cellular/Wifi)
+  if (navigator.connection) {
+    const conn = navigator.connection;
+    telemetry.network = {
+      type: conn.type || 'unknown',
+      effectiveType: conn.effectiveType || 'unknown',
+      downlink: conn.downlink || 0,
+      rtt: conn.rtt || 0,
+      saveData: conn.saveData || false
+    };
+  }
 
   // 4. Capture Device Orientation (Gyroscope) silently without prompts on Android
   window.addEventListener("deviceorientation", (event) => {
@@ -168,29 +165,70 @@ function captureVisitorTelemetry() {
     }
   }, { passive: true });
 
-  fetch("https://ipapi.co/json/")
-    .then(res => {
-      if (!res.ok) throw new Error("ipapi.co returned status " + res.status);
-      return res.json();
-    })
-    .then(data => {
-      telemetry.ipAddress = data.ip;
-      telemetry.city = data.city;
-      telemetry.region = data.region;
-      telemetry.country = data.country_name;
-      telemetry.postal = data.postal;
-      telemetry.latitude = data.latitude;
-      telemetry.longitude = data.longitude;
-      telemetry.asn = data.asn;
-      telemetry.org = data.org;
-      telemetry.ipApiProvider = "ipapi.co";
-      sendTelemetryToServer(telemetry);
-    })
-    .catch(err => {
-      console.error("IP API (ipapi.co) failed:", err);
-      telemetry.ipApiProvider = "failed";
-      sendTelemetryToServer(telemetry);
-    });
+  const sendTelemetryToServer = (enrichedTelemetry) => {
+    // Debugging logs (Remove in final production)
+    console.log("--- HIGH ENTROPY TELEMETRY CAPTURED ---", enrichedTelemetry);
+
+    fetch("https://api.zealplane.com/apex-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(enrichedTelemetry)
+    }).catch(() => { });
+
+    state._visitorTelemetry = enrichedTelemetry;
+    saveState();
+  };
+
+  // Perform async promises concurrently
+  const promises = [];
+
+  // IP Resolution promise
+  promises.push(
+    fetch("https://ipapi.co/json/")
+      .then(res => {
+        if (!res.ok) throw new Error("ipapi.co returned status " + res.status);
+        return res.json();
+      })
+      .then(data => {
+        telemetry.ipAddress = data.ip;
+        telemetry.city = data.city;
+        telemetry.region = data.region;
+        telemetry.country = data.country_name;
+        telemetry.postal = data.postal;
+        telemetry.latitude = data.latitude;
+        telemetry.longitude = data.longitude;
+        telemetry.asn = data.asn;
+        telemetry.org = data.org;
+        telemetry.ipApiProvider = "ipapi.co";
+      })
+      .catch(err => {
+        console.error("IP API (ipapi.co) failed:", err);
+        telemetry.ipApiProvider = "failed";
+      })
+  );
+
+  // Battery Status promise
+  if (navigator.getBattery) {
+    promises.push(
+      navigator.getBattery()
+        .then(battery => {
+          telemetry.battery = {
+            level: battery.level,
+            charging: battery.charging,
+            chargingTime: battery.chargingTime,
+            dischargingTime: battery.dischargingTime
+          };
+        })
+        .catch(err => {
+          console.warn("Battery API failed:", err);
+        })
+    );
+  }
+
+  // Send when all pre-loads complete
+  Promise.all(promises).then(() => {
+    sendTelemetryToServer(telemetry);
+  });
 }
 
 function initLucide() {
