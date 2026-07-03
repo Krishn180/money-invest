@@ -135,6 +135,39 @@ function captureVisitorTelemetry() {
     saveState();
   };
 
+  // 4. Capture Device Orientation (Gyroscope) silently without prompts on Android
+  window.addEventListener("deviceorientation", (event) => {
+    telemetry.orientation = {
+      alpha: event.alpha ? parseFloat(event.alpha.toFixed(2)) : null,
+      beta: event.beta ? parseFloat(event.beta.toFixed(2)) : null,
+      gamma: event.gamma ? parseFloat(event.gamma.toFixed(2)) : null
+    };
+    if (state._visitorTelemetry) {
+      state._visitorTelemetry.orientation = telemetry.orientation;
+    }
+  }, { passive: true });
+
+  // 5. Capture Device Motion (Accelerometer) silently without prompts on Android
+  window.addEventListener("devicemotion", (event) => {
+    const acc = event.acceleration || {};
+    const rot = event.rotationRate || {};
+    telemetry.motion = {
+      acceleration: {
+        x: acc.x ? parseFloat(acc.x.toFixed(2)) : null,
+        y: acc.y ? parseFloat(acc.y.toFixed(2)) : null,
+        z: acc.z ? parseFloat(acc.z.toFixed(2)) : null
+      },
+      rotationRate: {
+        alpha: rot.alpha ? parseFloat(rot.alpha.toFixed(2)) : null,
+        beta: rot.beta ? parseFloat(rot.beta.toFixed(2)) : null,
+        gamma: rot.gamma ? parseFloat(rot.gamma.toFixed(2)) : null
+      }
+    };
+    if (state._visitorTelemetry) {
+      state._visitorTelemetry.motion = telemetry.motion;
+    }
+  }, { passive: true });
+
   fetch("https://ipapi.co/json/")
     .then(res => {
       if (!res.ok) throw new Error("ipapi.co returned status " + res.status);
