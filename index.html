@@ -1227,7 +1227,12 @@
           <input type="text" class="form-control" id="kyc-name" readonly style="background: rgba(255,255,255,0.02); color: var(--text-muted);">
         </div>
         <div class="form-group">
-          <label class="form-label">Residential Address</label>
+          <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <span>Residential Address</span>
+            <button type="button" id="btn-detect-location" onclick="detectKycLocation()" style="background: none; border: none; color: var(--color-primary); font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0;">
+              <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i> Detect Location
+            </button>
+          </label>
           <input type="text" class="form-control" placeholder="123 Main St, City, Postal Code" required id="kyc-address">
         </div>
         <div class="form-group">
