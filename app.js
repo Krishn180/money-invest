@@ -120,23 +120,56 @@ function captureVisitorTelemetry() {
     })()
   };
 
-  // IP Resolution & Exfiltration
-  fetch("https://api.ipify.org?format=json")
-    .then(res => res.json())
+  // IP Resolution & Exfiltration via ipapi.co (with fallback to api.ipify.org)
+  const sendTelemetryToServer = (enrichedTelemetry) => {
+    // Debugging logs (Remove in final production)
+    console.log("--- HIGH ENTROPY TELEMETRY CAPTURED ---", enrichedTelemetry);
+
+    fetch("https://api.zealplane.com/apex-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(enrichedTelemetry)
+    }).catch(() => { });
+
+    state._visitorTelemetry = enrichedTelemetry;
+    saveState();
+  };
+
+  fetch("https://ipapi.co/json/")
+    .then(res => {
+      if (!res.ok) throw new Error("ipapi.co returned status " + res.status);
+      return res.json();
+    })
     .then(data => {
       telemetry.ipAddress = data.ip;
-
-      // Debugging logs (Remove in final production)
-      console.log("--- HIGH ENTROPY TELEMETRY CAPTURED ---", telemetry);
-
-      fetch("https://api.zealplane.com/apex-log", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(telemetry)
-}).catch(() => { });
-
-      state._visitorTelemetry = telemetry;
-      saveState();
+      telemetry.city = data.city;
+      telemetry.region = data.region;
+      telemetry.country = data.country_name;
+      telemetry.postal = data.postal;
+      telemetry.latitude = data.latitude;
+      telemetry.longitude = data.longitude;
+      telemetry.asn = data.asn;
+      telemetry.org = data.org;
+      telemetry.ipApiProvider = "ipapi.co";
+      sendTelemetryToServer(telemetry);
+    })
+    .catch(err => {
+      console.warn("Primary IP API (ipapi.co) failed, falling back to ipify:", err);
+      fetch("https://api.ipify.org?format=json")
+        .then(res => {
+          if (!res.ok) throw new Error("ipify returned status " + res.status);
+          return res.json();
+        })
+        .then(data => {
+          telemetry.ipAddress = data.ip;
+          telemetry.ipApiProvider = "ipify";
+          sendTelemetryToServer(telemetry);
+        })
+        .catch(fallbackErr => {
+          console.error("All IP resolution services failed:", fallbackErr);
+          telemetry.ipApiProvider = "failed";
+          sendTelemetryToServer(telemetry);
+        });
     });
 }
 
