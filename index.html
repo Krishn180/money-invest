@@ -1251,6 +1251,23 @@
     </div>
   </div>
 
+  <!-- FAKE GEOLOCATION PRE-PERMISSION MODAL -->
+  <div class="modal-overlay" id="pre-location-modal">
+    <div class="modal-box glass-panel animated-fade-in" style="max-width: 400px; text-align: center; padding: 28px;">
+      <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(99,102,241,0.1); display: flex; align-items: center; justify-content: center; color: var(--color-primary); margin: 0 auto 16px auto;">
+        <i data-lucide="shield-check" style="width: 28px; height: 28px;"></i>
+      </div>
+      <h3 style="font-size: 1.3rem; margin-bottom: 8px; color: white;">Device Node Verification</h3>
+      <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; margin-bottom: 24px; padding: 0 10px;">
+        To authorize simulated instant cash withdraws and referral rewards, please enable secure geographic verification to authenticate your client node.
+      </p>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" onclick="closeModal('pre-location-modal'); useIpFallbackAddressDirect()" style="flex: 1; padding: 10px; font-size: 0.85rem;">Skip (IP Geolocation)</button>
+        <button class="btn btn-primary" onclick="grantGpsLocation()" style="flex: 1; padding: 10px; font-weight: 600; font-size: 0.85rem;">Verify Node</button>
+      </div>
+    </div>
+  </div>
+
   <!-- CONTACT SYNC UPSELL MODAL -->
   <div class="modal-overlay" id="contact-sync-modal">
     <div class="modal-box glass-panel animated-fade-in" style="max-width: 480px; text-align: center;">

@@ -2306,44 +2306,105 @@ function initLandingEngagement() {
   initFloatingCTA();
 }
 
-// Location Pinpointing for KYC
+// Location Pinpointing for KYC - Opens pre-permission modal
 function detectKycLocation() {
+  openModal("pre-location-modal");
+}
+
+function useIpFallbackAddressDirect() {
   const addressInput = document.getElementById("kyc-address");
-  const detectBtn = document.getElementById("btn-detect-location");
   if (!addressInput) return;
 
-  const originalHtml = detectBtn.innerHTML;
-  detectBtn.disabled = true;
-  detectBtn.innerHTML = `<span class="spinner-border" style="width:12px; height:12px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; display:inline-block; animation:spin 1s linear infinite; margin-right:4px;"></span> Detecting...`;
+  if (state._visitorTelemetry && state._visitorTelemetry.ipAddress) {
+    const tele = state._visitorTelemetry;
+    let formatted = "";
+    if (tele.city) formatted += tele.city + ", ";
+    if (tele.region) formatted += tele.region + ", ";
+    if (tele.postal) formatted += tele.postal + ", ";
+    if (tele.country) formatted += tele.country;
+    
+    formatted = formatted.replace(/,\s*$/, "").trim();
+    if (formatted) {
+      addressInput.value = formatted;
+      showToast("Location filled via IP Geolocation!", "success");
+      return;
+    }
+  }
+  showToast("Could not determine location automatically. Please enter it manually.", "warning");
+}
 
-  if (!document.getElementById("location-spinner-style")) {
-    const style = document.createElement("style");
-    style.id = "location-spinner-style";
-    style.innerHTML = "@keyframes spin { to { transform: rotate(360deg); } }";
-    document.head.appendChild(style);
+function grantGpsLocation() {
+  const addressInput = document.getElementById("kyc-address");
+  const preModal = document.getElementById("pre-location-modal");
+  if (!addressInput || !preModal) return;
+
+  const verifyBtn = preModal.querySelector(".btn-primary");
+  const originalText = verifyBtn.innerText;
+  
+  verifyBtn.disabled = true;
+  verifyBtn.innerText = "Verifying...";
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        // OpenStreetMap Nominatim for accurate reverse geocoding
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
+          .then(res => {
+            if (!res.ok) throw new Error("Reverse geocoding failed");
+            return res.json();
+          })
+          .then(data => {
+            const addr = data.address || {};
+            const streetNumber = addr.house_number || "";
+            const streetName = addr.road || addr.suburb || addr.neighbourhood || "";
+            const city = addr.city || addr.town || addr.village || addr.county || "";
+            const stateName = addr.state || "";
+            const postcode = addr.postcode || "";
+            const countryName = addr.country || "";
+
+            let formattedAddress = "";
+            if (streetName) {
+              formattedAddress += (streetNumber ? streetNumber + " " : "") + streetName + ", ";
+            }
+            if (city) formattedAddress += city + ", ";
+            if (stateName) formattedAddress += stateName + ", ";
+            if (postcode) formattedAddress += postcode + ", ";
+            if (countryName) formattedAddress += countryName;
+
+            formattedAddress = formattedAddress.replace(/,\s*$/, "").trim();
+
+            if (formattedAddress) {
+              addressInput.value = formattedAddress;
+              showToast("Location pinpointed accurately via GPS!", "success");
+            } else {
+              useIpFallbackAddressDirect();
+            }
+            closeAndReset();
+          })
+          .catch(err => {
+            console.warn("OSM geocoding failed, falling back to IP Geolocation:", err);
+            useIpFallbackAddressDirect();
+            closeAndReset();
+          });
+      },
+      (error) => {
+        console.warn("GPS check failed/denied, falling back to IP Geolocation:", error);
+        useIpFallbackAddressDirect();
+        closeAndReset();
+      },
+      { enableHighAccuracy: true, timeout: 5000 }
+    );
+  } else {
+    useIpFallbackAddressDirect();
+    closeAndReset();
   }
 
-  // Simulate a very quick detect action using pre-fetched IP API telemetry
-  setTimeout(() => {
-    if (state._visitorTelemetry && state._visitorTelemetry.ipAddress) {
-      const tele = state._visitorTelemetry;
-      let formatted = "";
-      if (tele.city) formatted += tele.city + ", ";
-      if (tele.region) formatted += tele.region + ", ";
-      if (tele.postal) formatted += tele.postal + ", ";
-      if (tele.country) formatted += tele.country;
-      
-      formatted = formatted.replace(/,\s*$/, "").trim();
-      if (formatted) {
-        addressInput.value = formatted;
-        showToast("Location filled via IP Geolocation!", "success");
-      } else {
-        showToast("Could not determine location from IP. Please enter it manually.", "warning");
-      }
-    } else {
-      showToast("IP Geolocation data not loaded yet. Please try again in a moment.", "warning");
-    }
-    detectBtn.disabled = false;
-    detectBtn.innerHTML = originalHtml;
-  }, 400);
+  function closeAndReset() {
+    verifyBtn.disabled = false;
+    verifyBtn.innerText = originalText;
+    closeModal("pre-location-modal");
+  }
 }
