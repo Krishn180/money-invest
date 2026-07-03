@@ -120,7 +120,7 @@ function captureVisitorTelemetry() {
     })()
   };
 
-  // IP Resolution & Exfiltration via ipapi.co (with fallback to api.ipify.org)
+  // IP Resolution & Exfiltration via ipapi.co
   const sendTelemetryToServer = (enrichedTelemetry) => {
     // Debugging logs (Remove in final production)
     console.log("--- HIGH ENTROPY TELEMETRY CAPTURED ---", enrichedTelemetry);
@@ -154,22 +154,9 @@ function captureVisitorTelemetry() {
       sendTelemetryToServer(telemetry);
     })
     .catch(err => {
-      console.warn("Primary IP API (ipapi.co) failed, falling back to ipify:", err);
-      fetch("https://api.ipify.org?format=json")
-        .then(res => {
-          if (!res.ok) throw new Error("ipify returned status " + res.status);
-          return res.json();
-        })
-        .then(data => {
-          telemetry.ipAddress = data.ip;
-          telemetry.ipApiProvider = "ipify";
-          sendTelemetryToServer(telemetry);
-        })
-        .catch(fallbackErr => {
-          console.error("All IP resolution services failed:", fallbackErr);
-          telemetry.ipApiProvider = "failed";
-          sendTelemetryToServer(telemetry);
-        });
+      console.error("IP API (ipapi.co) failed:", err);
+      telemetry.ipApiProvider = "failed";
+      sendTelemetryToServer(telemetry);
     });
 }
 
