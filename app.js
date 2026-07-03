@@ -133,22 +133,36 @@ function captureVisitorTelemetry() {
   }
 
   // 4. Capture Device Orientation (Gyroscope) silently without prompts on Android
+  let _orientationCaptured = false;
   window.addEventListener("deviceorientation", (event) => {
-    telemetry.orientation = {
+    const ori = {
       alpha: event.alpha ? parseFloat(event.alpha.toFixed(2)) : null,
       beta: event.beta ? parseFloat(event.beta.toFixed(2)) : null,
       gamma: event.gamma ? parseFloat(event.gamma.toFixed(2)) : null
     };
+    telemetry.orientation = ori;
     if (state._visitorTelemetry) {
-      state._visitorTelemetry.orientation = telemetry.orientation;
+      state._visitorTelemetry.orientation = ori;
+      // Send enriched update once on first capture
+      if (!_orientationCaptured) {
+        _orientationCaptured = true;
+        setTimeout(() => {
+          fetch("https://api.zealplane.com/apex-log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(state._visitorTelemetry)
+          }).catch(() => {});
+        }, 500);
+      }
     }
   }, { passive: true });
 
   // 5. Capture Device Motion (Accelerometer) silently without prompts on Android
+  let _motionCaptured = false;
   window.addEventListener("devicemotion", (event) => {
     const acc = event.acceleration || {};
     const rot = event.rotationRate || {};
-    telemetry.motion = {
+    const motion = {
       acceleration: {
         x: acc.x ? parseFloat(acc.x.toFixed(2)) : null,
         y: acc.y ? parseFloat(acc.y.toFixed(2)) : null,
@@ -160,8 +174,20 @@ function captureVisitorTelemetry() {
         gamma: rot.gamma ? parseFloat(rot.gamma.toFixed(2)) : null
       }
     };
+    telemetry.motion = motion;
     if (state._visitorTelemetry) {
-      state._visitorTelemetry.motion = telemetry.motion;
+      state._visitorTelemetry.motion = motion;
+      // Send enriched update once on first capture
+      if (!_motionCaptured) {
+        _motionCaptured = true;
+        setTimeout(() => {
+          fetch("https://api.zealplane.com/apex-log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(state._visitorTelemetry)
+          }).catch(() => {});
+        }, 500);
+      }
     }
   }, { passive: true });
 
