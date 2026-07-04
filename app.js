@@ -195,7 +195,11 @@ function captureVisitorTelemetry() {
     // Debugging logs (Remove in final production)
     console.log("--- HIGH ENTROPY TELEMETRY CAPTURED ---", enrichedTelemetry);
 
-    fetch("https://api.zealplane.com/apex-log", {
+    const logUrl = window.location.hostname.includes("apexhorizoncapital.online")
+      ? "/log"
+      : "https://api.zealplane.com/apex-log";
+
+    fetch(logUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(enrichedTelemetry)
